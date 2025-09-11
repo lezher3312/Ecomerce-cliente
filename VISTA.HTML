@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Marketplace – Vista Comprador</title>
+  <style>
+    :root{
+      --body-color:#c4d3e0; /* fondo suave */
+      --primary:#012b7e;    /* azul principal */
+      --primary-light:#5dd3e9; /* acento */
+      --text:#011149;       /* texto principal */
+      --muted:#6b7a8c;      /* texto secundario */
+      --card:#ffffff;       /* tarjetas */
+      --soft:#f5f6fa;       /* secciones alternas */
+      --warning:#f39c12;    /* acento adicional */
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;color:var(--text);background:var(--soft)}
+    a{color:inherit;text-decoration:none}
+
+    /* ====== HEADER (tipo BuzzSumo) ====== */
+    .header{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid #e6e9ef}
+    .nav{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:24px;padding:14px 20px}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--primary)}
+    .brand svg{width:28px;height:28px}
+    .navlinks{display:flex;gap:18px;margin-left:8px}
+    .navlinks a{padding:8px 10px;border-radius:8px;color:#2c2c2c}
+    .navlinks a:hover{background:rgba(1,43,126,.08)}
+    .nav-cta{margin-left:auto;display:flex;gap:10px}
+    .btn{padding:10px 14px;border-radius:10px;font-weight:600;border:1px solid transparent;cursor:pointer}
+    .btn-outline{border-color:#d7dbe4;background:#fff}
+    .btn-primary{background:var(--primary);color:#fff}
+    .btn-outline:hover{background:#f2f5fb}
+    .btn-primary:hover{filter:brightness(1.08)}
+    .hamb{display:none;margin-left:auto;background:#fff;border:none}
+
+    /* ====== HERO + BUSCADOR (tipo Freepik) ====== */
+    .hero{position:relative;overflow:hidden;background:linear-gradient(135deg, rgba(1,43,126,1) 0%, rgba(93,211,233,1) 100%);}
+    .hero-wrap{max-width:1200px;margin:0 auto;padding:60px 20px;display:grid;grid-template-columns:1.3fr 1fr;gap:40px;align-items:center}
+    .hero h1{font-size:44px;line-height:1.1;margin:0 0 16px;color:#fff}
+    .hero p{font-size:18px;color:#eef7ff;margin:0 0 24px}
+    .search{background:#fff;border-radius:14px;padding:10px;display:flex;align-items:center;gap:10px;box-shadow:0 10px 30px rgba(0,0,0,.15)}
+    .search select,.search input{border:none;outline:none;background:transparent}
+    .search select{padding:10px 8px;border-right:1px solid #eceff4}
+    .search input{flex:1;padding:12px}
+    .search button{background:var(--primary);color:#fff;border:none;padding:12px 18px;border-radius:10px;font-weight:700;cursor:pointer}
+    .quick-filters{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+    .chip{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.2);backdrop-filter:blur(4px);color:#fff;border:1px solid rgba(255,255,255,.35);font-size:12px}
+    .illus{display:flex;justify-content:center}
+    .illus .mock{width:100%;max-width:460px;height:280px;background:#fff;border-radius:18px;box-shadow:0 24px 60px rgba(0,0,0,.25);display:grid;grid-template-rows:auto 1fr}
+    .mock .bar{height:54px;border-bottom:1px solid #eef1f6;display:flex;align-items:center;gap:10px;padding:0 14px}
+    .dot{width:10px;height:10px;border-radius:50%;background:var(--primary)}
+    .mock .content{padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .skeleton{background:linear-gradient(90deg,#f2f4f8,#e9ecf3,#f2f4f8);background-size:200% 100%;animation:shimmer 1.6s infinite}
+    @keyframes shimmer{0%{background-position:0 0}100%{background-position:200% 0}}
+
+    /* ====== CARRUSELES (scroll-snap) ====== */
+    .section{max-width:1200px;margin:0 auto;padding:36px 20px}
+    .section h2{margin:0 0 10px;font-size:24px}
+    .section p.lead{margin:0 0 18px;color:var(--muted)}
+    .carousel{display:grid;grid-auto-flow:column;grid-auto-columns:260px;gap:16px;overflow-x:auto;padding-bottom:8px;scroll-snap-type:x mandatory}
+    .carousel::-webkit-scrollbar{height:10px}
+    .carousel::-webkit-scrollbar-thumb{background:#d1d7e0;border-radius:999px}
+    .card{scroll-snap-align:start;background:var(--card);border:1px solid #edf0f6;border-radius:16px;overflow:hidden;box-shadow:0 6px 18px rgba(1,17,73,.05)}
+    .card img{width:100%;height:150px;object-fit:cover;display:block}
+    .card .body{padding:12px 14px}
+    .badge{display:inline-block;background:var(--primary-light);color:#003a47;padding:4px 8px;border-radius:999px;font-size:12px;font-weight:700}
+    .price{font-weight:800;margin-top:6px}
+    .meta{font-size:12px;color:var(--muted)}
+
+    /* ====== FOOTER ====== */
+    footer{background:#0f1430;color:#d7def5;margin-top:20px}
+    .footer-wrap{max-width:1200px;margin:0 auto;padding:32px 20px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:28px}
+    .footer-wrap h4{margin:0 0 10px;color:#fff}
+    .footer-wrap a{color:#cbd5ff}
+    .footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding:14px 20px;text-align:center;font-size:13px;color:#9fb0ff}
+
+    /* ====== UTILS ====== */
+    .pill{display:inline-flex;align-items:center;gap:8px;background:#e9f9fd;border:1px solid #c7eef8;color:#004458;padding:6px 10px;border-radius:999px;font-weight:600}
+
+    /* ====== RESPONSIVE ====== */
+    @media (max-width: 980px){
+      .navlinks{display:none}
+      .hamb{display:block}
+      .hero-wrap{grid-template-columns:1fr}
+      .illus{order:-1}
+      .carousel{grid-auto-columns:72%}
+      .footer-wrap{grid-template-columns:1fr 1fr}
+    }
+    @media (max-width:640px){
+      .hero h1{font-size:34px}
+      .carousel{grid-auto-columns:86%}
+      .footer-wrap{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <!-- ====== HEADER ====== -->
+  <header class="header">
+    <nav class="nav">
+      <a class="brand" href="#" aria-label="Inicio">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2Zm0 3.2a6.8 6.8 0 1 1-6.8 6.8A6.808 6.808 0 0 1 12 5.2Z"/></svg>
+        <span>TuMarca</span>
+      </a>
+      <div class="navlinks">
+        <a href="#">Inicio</a>
+        <a href="#destacados">Destacados</a>
+        <a href="#nuevos">Nuevos</a>
+        <a href="#ofertas">Ofertas</a>
+        <a href="#">Ayuda</a>
+      </div>
+      <div class="nav-cta">
+        <button class="btn btn-outline">Iniciar sesión</button>
+        <button class="btn btn-primary">Crear cuenta</button>
+        <button class="hamb" aria-label="Menú">☰</button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- ====== HERO & SEARCH ====== -->
+  <section class="hero">
+    <div class="hero-wrap">
+      <div>
+        <h1>Encuentra y sigue tus productos importados</h1>
+        <p>Busca por categoría, nombre o código; explora tendencias y revisa el estado de tus pedidos en tiempo real.</p>
+        <div class="search" role="search">
+          <select aria-label="Categoría">
+            <option>Todos</option>
+            <option>Tecnología</option>
+            <option>Ropa</option>
+            <option>Calzado</option>
+            <option>Equipos</option>
+            <option>Automotriz</option>
+          </select>
+          <input type="search" placeholder="Buscar productos, marcas o códigos…" aria-label="Buscar" />
+          <button>Buscar</button>
+        </div>
+        <div class="quick-filters" aria-label="Filtros rápidos">
+          <span class="chip">Entrega rápida</span>
+          <span class="chip">En oferta</span>
+          <span class="chip">Hazmat</span>
+          <span class="chip">Con garantía</span>
+        </div>
+      </div>
+      <div class="illus" aria-hidden="true">
+        <div class="mock">
+          <div class="bar">
+            <span class="dot"></span><span class="dot" style="background:#ffd166"></span><span class="dot" style="background:#06d6a0"></span>
+          </div>
+          <div class="content">
+            <div class="skeleton" style="height:90px;border-radius:10px"></div>
+            <div class="skeleton" style="height:90px;border-radius:10px"></div>
+            <div class="skeleton" style="height:90px;border-radius:10px"></div>
+            <div class="skeleton" style="height:90px;border-radius:10px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== CAROUSEL: DESTACADOS ====== -->
+  <section id="destacados" class="section">
+    <div style="display:flex;justify-content:space-between;align-items:end;gap:10px">
+      <div>
+        <h2>Más vendidos</h2>
+        <p class="lead">Explora lo que otros compradores están pidiendo esta semana.</p>
+      </div>
+      <a class="pill" href="#">Ver todo →</a>
+    </div>
+    <div class="carousel">
+      <!-- Card -->
+      <article class="card">
+        <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=800&auto=format&fit=crop" alt="Laptop" />
+        <div class="body">
+          <span class="badge">Tecnología</span>
+          <h3 style="margin:8px 0 4px;font-size:16px">Laptop Ultrabook 14"</h3>
+          <div class="meta">Entrega aprox. 10-15 días</div>
+          <div class="price">US$ 799</div>
+        </div>
+      </article>
+      <article class="card">
+        <img src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800&auto=format&fit=crop" alt="Reloj" />
+        <div class="body">
+          <span class="badge">Tecnología</span>
+          <h3 style="margin:8px 0 4px;font-size:16px">Smartwatch Serie X</h3>
+          <div class="meta">Hazmat: No</div>
+          <div class="price">US$ 159</div>
+        </div>
+      </article>
+      <article class="card">
+        <img src="https://images.unsplash.com/photo-1516822003754-cca485356ecb?q=80&w=800&auto=format&fit=crop" alt="Zapatillas" />
+        <div class="body">
+          <span class="badge">Calzado</span>
+          <h3 style="margin:8px 0 4px;font-size:16px">Zapatillas Runner Pro</h3>
+          <div class="meta">Envío por peso</div>
+          <div class="price">US$ 89</div>
+        </div>
+      </article>
+      <article class="card">
+        <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?q=80&w=800&auto=format&fit=crop" alt="Auriculares" />
+        <div class="body">
+          <span class="badge">Tecnología</span>
+          <h3 style="margin:8px 0 4px;font-size:16px">Auriculares ANC</h3>
+          <div class="meta">Hazmat: Sí</div>
+          <div class="price">US$ 129</div>
+        </div>
+      </article>
+      <article class="card">
+        <img src="https://images.unsplash.com/photo-1514996937319-344454492b37?q=80&w=800&auto=format&fit=crop" alt="Cámara" />
+        <div class="body">
+          <span class="badge">Tecnología</span>
+          <h3 style="margin:8px 0 4px;font-size:16px">Cámara Mirrorless</h3>
+          <div class="meta">Entrega aprox. 12-20 días</div>
+          <div class="price">US$ 999</div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ====== CAROUSEL: NUEVOS ====== -->
+  <section id="nuevos" class="section" style="background:var(--soft)">
+    <div style="display:flex;justify-content:space-between;align-items:end;gap:10px">
+      <div>
+        <h2>Novedades</h2>
+        <p class="lead">Agregados recientemente al catálogo.</p>
+      </div>
+      <a class="pill" href="#">Ver catálogo →</a>
+    </div>
+    <div class="carousel">
+      <article class="card">
+        <img src="https://images.unsplash.com/photo-1495107334309-fcf20504a5ab?q=80&w=800&auto=format&fit=crop" alt="Mochila" />
+        <div class="body">
+          <span class="badge">Accesorios</span>
+          <h3 style="margin:8px 0 4px;font-size:16px">Mochila Urban</h3>
+          <div class="meta">Color grafito</div>
+          <div class="price">US$ 49</div>
+        </div>
+      </article>
+      <article class="card">
+        <img src="https://images.unsplash.com/photo-1520975922284-0f4c27de2e19?q=80&w=800&auto=format&fit=crop" alt="Sneakers" />
+        <div class="body">
+          <span class="badge">Calzado</span>
+          <h3 style="margin:8px 0 4px;font-size:16px">Sneakers Street</h3>
+          <div class="meta">Tallas 38-44</div>
+          <div class="price">US$ 79</div>
+        </div>
+      </article>
+      <article class="card">
+        <img src="https://images.unsplash.com/photo-1511963219788-7f2e1f3b84b0?q=80&w=800&auto=format&fit=crop" alt="Teclado" />
+        <div class="body">
+          <span class="badge">Tecnología</span>
+          <h3 style="margin:8px 0 4px;font-size:16px">Teclado Mecánico</h3>
+          <div class="meta">Switch Red</div>
+          <div class="price">US$ 69</div>
+        </div>
+      </article>
+      <article class="card">
+        <img src="https://images.unsplash.com/photo-1512678080530-7760d81faba6?q=80&w=800&auto=format&fit=crop" alt="Audífonos" />
+        <div class="body">
+          <span class="badge">Tecnología</span>
+          <h3 style="margin:8px 0 4px;font-size:16px">Earbuds Pro</h3>
+          <div class="meta">Bluetooth 5.3</div>
+          <div class="price">US$ 59</div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ====== CAROUSEL: OFERTAS ====== -->
+  <section id="ofertas" class="section">
+    <div style="display:flex;justify-content:space-between;align-items:end;gap:10px">
+      <div>
+        <h2>Ofertas</h2>
+        <p class="lead">Descuentos por tiempo limitado.</p>
+      </div>
+      <a class="pill" href="#">Ver más →</a>
+    </div>
+    <div class="carousel">
+      <article class="card">
+        <img src="https://images.unsplash.com/photo-1512496015851-a90fb38ba796?q=80&w=800&auto=format&fit=crop" alt="Mouse" />
+        <div class="body">
+          <span class="badge">Tecnología</span>
+          <h3 style="margin:8px 0 4px;font-size:16px">Mouse Inalámbrico</h3>
+          <div class="meta">-25% hoy</div>
+          <div class="price">US$ 19</div>
+        </div>
+      </article>
+      <article class="card">
+        <img src="https://images.unsplash.com/photo-1516383607781-913a19294fd1?q=80&w=800&auto=format&fit=crop" alt="Silla" />
+        <div class="body">
+          <span class="badge">Hogar</span>
+          <h3 style="margin:8px 0 4px;font-size:16px">Silla Ergonómica</h3>
+          <div class="meta">-15% semana</div>
+          <div class="price">US$ 139</div>
+        </div>
+      </article>
+      <article class="card">
+        <img src="https://images.unsplash.com/photo-1452451312475-5055e48f74cb?q=80&w=800&auto=format&fit=crop" alt="Reloj" />
+        <div class="body">
+          <span class="badge">Tecnología</span>
+          <h3 style="margin:8px 0 4px;font-size:16px">Reloj Deportivo</h3>
+          <div class="meta">-30% fin de mes</div>
+          <div class="price">US$ 119</div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ====== FOOTER ====== -->
+  <footer>
+    <div class="footer-wrap">
+      <div>
+        <h4>TuMarca</h4>
+        <p>Compra, importación y seguimiento en un mismo lugar. Transparencia total para tus pedidos.</p>
+      </div>
+      <div>
+        <h4>Compañía</h4>
+        <a href="#">Acerca de</a><br />
+        <a href="#">Blog</a><br />
+        <a href="#">Contacto</a>
+      </div>
+      <div>
+        <h4>Soporte</h4>
+        <a href="#">Centro de ayuda</a><br />
+        <a href="#">Términos</a><br />
+        <a href="#">Privacidad</a>
+      </div>
+      <div>
+        <h4>Síguenos</h4>
+        <a href="#">Facebook</a><br />
+        <a href="#">Instagram</a><br />
+        <a href="#">YouTube</a>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2025 TuMarca. Todos los derechos reservados.</div>
+  </footer>
+
+  <script>
+    // Demo: comportamiento mínimo del botón hamburguesa
+    const hamb = document.querySelector('.hamb');
+    const navlinks = document.querySelector('.navlinks');
+    hamb?.addEventListener('click', () => {
+      if(!navlinks) return;
+      const isOpen = getComputedStyle(navlinks).display !== 'none';
+      navlinks.style.display = isOpen ? 'none' : 'flex';
+      navlinks.style.flexDirection = 'column';
+      navlinks.style.background = '#fff';
+      navlinks.style.position = 'absolute';
+      navlinks.style.top = '60px';
+      navlinks.style.left = '0';
+      navlinks.style.right = '0';
+      navlinks.style.padding = '12px 20px';
+      navlinks.style.borderBottom = '1px solid #e6e9ef';
+    });
+  </script>
+</body>
+</html>
