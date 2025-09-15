@@ -32,6 +32,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/detalle') {
 
 
 
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($path === '/login')) {
+  require_once __DIR__ . '/controllers/AuthController.php';
+  (new AuthController())->index();
+  exit;
+}
+
+
 // 404 por defecto
 http_response_code(404);
 echo "404 — Ruta no encontrada: {$path}";

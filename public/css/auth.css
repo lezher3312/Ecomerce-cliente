@@ -1,0 +1,15 @@
+.auth{
+    width: min(95%, 500px);
+    margin: 0 auto;
+    min-height: 40vh;
+}
+
+.auth__heading{
+      text-align: center;
+      font-size: 2rem;
+}
+
+.auth__texto{
+    font-size: 1rem;
+    margin: 0;
+}
