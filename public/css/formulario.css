@@ -1,0 +1,29 @@
+.formulario{
+    display: flex;
+    flex-direction: column; 
+}
+
+.formulario__campo{
+     display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 1.5rem 0; 
+}
+
+.formulario__label{
+    display: block;
+    font-size: 1rem;
+    color: black;
+}
+
+.formulario__input, .formulario__select{
+   padding: 5px;
+   border: none;
+   border-radius: 5px; 
+}
+
+.formulario__submit{
+    text-align: center;
+    width: 100%;
+    display: inline-block;
+}

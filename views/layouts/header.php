@@ -12,7 +12,7 @@
       <a href="#">Ayuda</a>
     </div>
     <div class="nav-cta">
-      <button class="btn btn-outline">Iniciar sesión</button>
+      <a href="/login" class="btn btn-outline">Iniciar sesión</a>
       <button class="btn btn-primary">Crear cuenta</button>
       <button class="hamb" aria-label="Menú">☰</button>
     </div>
