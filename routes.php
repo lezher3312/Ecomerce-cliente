@@ -11,21 +11,25 @@ if (strpos($path, $basePath) === 0) {
 }
 $path = '/' . ltrim($path, '/'); // normaliza
 
-// DEBUG (descomenta si sigue en blanco)
-// echo "PATH={$path} | basePath={$basePath}"; exit;
-
-// Ruta: GET /
+// inicia la pagina
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($path === '/' || $path === '/inicio')) {
   require_once __DIR__ . '/controllers/InicioController.php';
   (new InicioController())->index();
   exit;
 }
-// GET /catalogo
+// ver /catalogo
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/catalogo') {
   require_once __DIR__ . '/controllers/CatalogoController.php';
   (new CatalogoController())->index();
   exit;
 }
+// detalle producto
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/detalle') {
+  require_once __DIR__ . '/controllers/DetalleController.php';
+  (new DetalleController())->show($_GET['id'] ?? null);
+  exit;
+}
+
 
 
 // 404 por defecto

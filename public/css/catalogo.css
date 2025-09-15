@@ -1,0 +1,240 @@
+/* ============================================
+   CATALOGO.CSS — Estilos específicos de catálogo
+   ============================================ */
+
+/* Layout general */
+.catalogo {
+  display: flex;
+  gap: var(--sp-8);
+  padding: var(--sp-8);
+}
+
+/* ======================
+   FILTROS (Sidebar)
+   ====================== */
+.filtros {
+  flex: 0 0 260px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-6);
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 80px;
+  align-self: flex-start;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+.filtros h3 {
+  margin: 0 0 var(--sp-4);
+  font-size: var(--fs-18);
+  font-weight: var(--fw-700);
+  color: var(--primary);
+  border-bottom: 2px solid var(--primary-light);
+  padding-bottom: var(--sp-2);
+}
+
+.filtros label {
+  display: block;
+  margin-top: var(--sp-5);
+  font-weight: var(--fw-600);
+  color: var(--text);
+  font-size: var(--fs-14);
+}
+
+.filtros select,
+.filtros input {
+  width: 100%;
+  padding: var(--sp-3) var(--sp-4);
+  margin-top: var(--sp-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--soft);
+  font-size: var(--fs-14);
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+.filtros select:focus,
+.filtros input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(1, 43, 126, 0.1);
+}
+
+.filtros button {
+  width: 100%;
+  margin-top: var(--sp-6);
+  background: var(--primary);
+  color: var(--inverse);
+  font-weight: var(--fw-600);
+  padding: var(--sp-3) var(--sp-4);
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.filtros button:hover {
+  background: var(--primary-600);
+}
+
+.filtros button:active {
+  transform: scale(0.98);
+}
+
+/* Botón toggle para móviles */
+.filtros-toggle {
+  display: none;
+  background: var(--primary-light);
+  color: var(--text);
+  padding: var(--sp-3) var(--sp-4);
+  border-radius: var(--radius-md);
+  font-weight: var(--fw-600);
+  margin-bottom: var(--sp-4);
+  cursor: pointer;
+  border: none;
+}
+
+/* ======================
+   CARDS de productos
+   ====================== */
+.productos {
+  flex: 1;
+}
+
+.productos h2 {
+  margin-bottom: var(--sp-4);
+  font-size: var(--fs-18);
+  font-weight: var(--fw-700);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--sp-6);
+}
+
+.card-prod {
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.card-prod img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.card-prod .body {
+  padding: var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.card-prod h3 {
+  font-size: var(--fs-16);
+  font-weight: var(--fw-600);
+  margin: 0;
+  color: var(--primary);
+}
+
+.card-prod .price {
+  font-size: var(--fs-16);
+  font-weight: var(--fw-700);
+  color: var(--ok);
+}
+
+.card-prod:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: var(--shadow-md);
+}
+
+/* Badge de oferta */
+.card-prod::after {
+  content: attr(data-badge);
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: var(--warning);
+  color: var(--inverse);
+  font-size: var(--fs-12);
+  font-weight: var(--fw-700);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  display: none;
+}
+.card-prod[data-badge]::after { display: inline-block; }
+
+/* ======================
+   RESPONSIVE
+   ====================== */
+@media (max-width: 980px) {
+  .catalogo { flex-direction: column; }
+  .filtros {
+    flex: none;
+    width: 100%;
+    position: relative;
+    top: auto;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+  }
+  .filtros.open {
+    max-height: 1000px;
+    opacity: 1;
+  }
+  .filtros-toggle { display: block; }
+}
+
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-4);
+  }
+  .card-prod img { height: 140px; }
+}
+
+@media (max-width: 420px) {
+  .grid { grid-template-columns: 1fr; }
+}
+
+/* ======================
+   PRECIO TOGGLE
+   ====================== */
+.precio-toggle {
+  margin-top: var(--sp-5);
+}
+
+.precio-toggle button {
+  width: 100%;
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--primary-light);
+  color: var(--text);
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: var(--fw-600);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.precio-toggle button:hover {
+  background: var(--primary-600);
+  color: var(--inverse);
+}
+
+.precio-inputs {
+  margin-top: var(--sp-4);
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+.hidden {
+  display: none;
+}

@@ -1,0 +1,62 @@
+.detalle-wrap {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: var(--sp-8);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-8);
+}
+
+.detalle-fotos .foto-principal {
+  width: 100%;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  object-fit: cover;
+}
+
+.detalle-info h1 {
+  font-size: var(--fs-24);
+  font-weight: var(--fw-700);
+  margin-bottom: var(--sp-4);
+}
+
+.detalle-info .categoria {
+  display: inline-block;
+  margin-bottom: var(--sp-4);
+  font-size: var(--fs-14);
+  color: var(--muted);
+}
+
+.detalle-info .descripcion {
+  margin-bottom: var(--sp-6);
+  line-height: 1.6;
+}
+
+.precios {
+  margin-bottom: var(--sp-6);
+}
+.precio-actual {
+  font-size: var(--fs-18);
+  font-weight: var(--fw-700);
+  color: var(--ok);
+}
+.precio-oferta {
+  font-size: var(--fs-16);
+  font-weight: var(--fw-600);
+  color: var(--danger);
+  margin-left: var(--sp-4);
+  text-decoration: line-through;
+}
+
+.meta {
+  margin-bottom: var(--sp-6);
+  font-size: var(--fs-14);
+  color: var(--muted);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .detalle-wrap {
+    grid-template-columns: 1fr;
+  }
+}
