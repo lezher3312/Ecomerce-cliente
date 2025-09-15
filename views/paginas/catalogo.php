@@ -57,6 +57,12 @@
               <p class="price">US$ <?= number_format($p['precio'], 2) ?></p>
             </div>
           </a>
+         <form action="<?= htmlspecialchars($basePath) ?>/carrito" method="post" class="form-cart">
+  <input type="hidden" name="ID_PRODCUTO" value="<?= (int)$p['id_producto'] ?>">
+  <input type="hidden" name="cantidad" value="1">
+  <button type="submit" class="btn-agregar">🛒 Agregar al carrito</button>
+</form>
+
         </article>
       <?php endforeach; ?>
     </div>

@@ -238,3 +238,32 @@
 .hidden {
   display: none;
 }
+/* ======================
+   BOTÓN Agregar al carrito
+   ====================== */
+.card-prod .form-cart {
+  margin: var(--sp-4);
+  text-align: center;
+}
+
+.card-prod .btn-agregar {
+  display: inline-block;
+  width: 100%;
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--primary);
+  color: var(--inverse);
+  font-weight: var(--fw-600);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+}
+
+.card-prod .btn-agregar:hover {
+  background: var(--primary-600);
+  box-shadow: var(--shadow-sm);
+}
+
+.card-prod .btn-agregar:active {
+  transform: scale(0.98);
+}

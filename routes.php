@@ -61,6 +61,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($path === '/login')) {
   exit;
 }
 
+// POST /carrito
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $path === '/carrito') {
+  require_once __DIR__ . '/controllers/CarritoController.php';
+  (new CarritoController())->agregar();
+  exit;
+}
+
+// GET /carrito
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/carrito') {
+  require_once __DIR__ . '/controllers/CarritoController.php';
+  (new CarritoController())->index();
+  exit;
+}
+
 
 // 404 por defecto
 http_response_code(404);
