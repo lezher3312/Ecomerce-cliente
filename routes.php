@@ -17,12 +17,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($path === '/' || $path === '/inicio
   (new InicioController())->index();
   exit;
 }
-// ver /catalogo
+
+// Catálogo general
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/catalogo') {
   require_once __DIR__ . '/controllers/CatalogoController.php';
   (new CatalogoController())->index();
   exit;
 }
+
+// Novedades
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/novedades') {
+  require_once __DIR__ . '/controllers/CatalogoController.php';
+  (new CatalogoController())->novedades();
+  exit;
+}
+
+// Más vendidos
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/mas-vendidos') {
+  require_once __DIR__ . '/controllers/CatalogoController.php';
+  (new CatalogoController())->masVendidos();
+  exit;
+}
+
+// Ofertas
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/ofertas') {
+  require_once __DIR__ . '/controllers/CatalogoController.php';
+  (new CatalogoController())->ofertas();
+  exit;
+}
+
 // detalle producto
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/detalle') {
   require_once __DIR__ . '/controllers/DetalleController.php';

@@ -78,6 +78,38 @@ class ProductoModel {
     $stmt->execute([$id]);
     return $stmt->fetch();
 }
+public function obtenerNovedades() {
+    $sql = "SELECT ID_PRODUCTO AS id_producto, 
+                   NOMBRE_PRODUCTO AS nombre,
+                   DESCRIPCION AS descripcion,
+                   PRECIO AS precio,
+                   FOTOGRAFIA_PRODUCTO AS imagen_principal,
+                   FECHA_CREACION
+              FROM producto
+             WHERE ESTADO = 1
+               AND FECHA_CREACION >= NOW() - INTERVAL 5 DAY
+          ORDER BY FECHA_CREACION DESC";
+    return $this->db->query($sql)->fetchAll();
+}
 
+public function obtenerMasVendidos() {
+    // Simulación: menor existencia = más vendido
+    $sql = "SELECT ID_PRODUCTO AS id_producto, 
+                   NOMBRE_PRODUCTO AS nombre,
+                   DESCRIPCION AS descripcion,
+                   PRECIO AS precio,
+                   FOTOGRAFIA_PRODUCTO AS imagen_principal,
+                   EXISTENCIA
+              FROM producto
+             WHERE ESTADO = 1
+          ORDER BY EXISTENCIA ASC
+             LIMIT 10";
+    return $this->db->query($sql)->fetchAll();
+}
+
+public function obtenerOfertas() {
+    // Simulación: devolver vacío hasta que admin registre ofertas
+    return [];
+}
 
 }
