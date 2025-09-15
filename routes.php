@@ -20,6 +20,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($path === '/' || $path === '/inicio
   (new InicioController())->index();
   exit;
 }
+// GET /catalogo
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/catalogo') {
+  require_once __DIR__ . '/controllers/CatalogoController.php';
+  (new CatalogoController())->index();
+  exit;
+}
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($path === '/login')) {
   require_once __DIR__ . '/controllers/AuthController.php';
