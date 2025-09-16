@@ -1,4 +1,14 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+$cartCount = 0;
+if (!empty($_SESSION['carrito']) && is_array($_SESSION['carrito'])) {
+    foreach ($_SESSION['carrito'] as $it) {
+        $cartCount += isset($it['cantidad']) ? (int)$it['cantidad'] : 1;
+    }
+}
+
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $scriptDir = rtrim(str_replace('\\','/', dirname($_SERVER['SCRIPT_NAME'])), '/');
 $basePath  = ($scriptDir === '/' || $scriptDir === '.' || $scriptDir === '') ? '' : $scriptDir;
@@ -17,6 +27,13 @@ $basePath  = ($scriptDir === '/' || $scriptDir === '.' || $scriptDir === '') ? '
       <a href="<?= $basePath ?>/inicio#nuevos">Nuevos</a>
       <a href="<?= $basePath ?>/inicio#ofertas">Ofertas</a>
       <a href="<?= $basePath ?>/ayuda" class="<?= $uri === $basePath.'/ayuda' ? 'active' : '' ?>">Ayuda</a>
+      <a href="<?= $basePath ?>/carrito" 
+   class="btn-cart <?= $path === '/carrito' ? 'active' : '' ?>">
+   <span class="cart-icon" aria-hidden="true">🛒Carrito</span>
+   <span class="cart-badge"<?= $cartCount ? '' : ' style="display:none;"' ?>>
+      <?= $cartCount ?>
+   </span>
+</a>
     </div>
 
     <div class="nav-cta">

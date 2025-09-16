@@ -179,3 +179,40 @@ footer{background:#0f1430;color:#d7def5;margin-top:20px}
   .carousel{grid-auto-columns:86%}
   .footer-wrap{grid-template-columns:1fr}
 }
+/* Botón carrito */
+.btn-cart{
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .55rem .9rem;
+  border-radius: .65rem;
+  border: 1px solid #d9dce3;
+  background: #0b3a8b;
+  color:#fff;
+  font-weight:600;
+  text-decoration:none;
+  transition: transform .05s ease, background .2s ease;
+}
+.btn-cart:hover{ background:#0a3380; }
+.btn-cart:active{ transform: translateY(1px); }
+
+.cart-icon{ font-size: 1.05rem; line-height: 1; }
+
+/* Badge con contador */
+.cart-badge{
+  position:absolute;
+  top:-8px;
+  right:-8px;
+  min-width:20px;
+  height:20px;
+  padding:0 6px;
+  border-radius:999px;
+  background:#ff3b3b;
+  color:#fff;
+  font-size:.75rem;
+  line-height:20px;
+  text-align:center;
+  font-weight:700;
+  box-shadow:0 1px 3px rgba(0,0,0,.15);
+}

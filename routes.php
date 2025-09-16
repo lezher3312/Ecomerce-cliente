@@ -11,21 +11,48 @@ if (strpos($path, $basePath) === 0) {
 }
 $path = '/' . ltrim($path, '/'); // normaliza
 
-// DEBUG (descomenta si sigue en blanco)
-// echo "PATH={$path} | basePath={$basePath}"; exit;
-
-// Ruta: GET /
+// inicia la pagina
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($path === '/' || $path === '/inicio')) {
   require_once __DIR__ . '/controllers/InicioController.php';
   (new InicioController())->index();
   exit;
 }
-// GET /catalogo
+
+// Catálogo general
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/catalogo') {
   require_once __DIR__ . '/controllers/CatalogoController.php';
   (new CatalogoController())->index();
   exit;
 }
+
+// Novedades
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/novedades') {
+  require_once __DIR__ . '/controllers/CatalogoController.php';
+  (new CatalogoController())->novedades();
+  exit;
+}
+
+// Más vendidos
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/mas-vendidos') {
+  require_once __DIR__ . '/controllers/CatalogoController.php';
+  (new CatalogoController())->masVendidos();
+  exit;
+}
+
+// Ofertas
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/ofertas') {
+  require_once __DIR__ . '/controllers/CatalogoController.php';
+  (new CatalogoController())->ofertas();
+  exit;
+}
+
+// detalle producto
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/detalle') {
+  require_once __DIR__ . '/controllers/DetalleController.php';
+  (new DetalleController())->show($_GET['id'] ?? null);
+  exit;
+}
+
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($path === '/login')) {
@@ -37,6 +64,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($path === '/login')) {
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($path === '/registro')) {
   require_once __DIR__ . '/controllers/AuthController.php';
   (new AuthController())->registro();
+}
+
+if($_SERVER['REQUEST_METHOD'] === 'POST' && $path === '/registro'){
+  
+}
+
+// POST /carrito
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $path === '/carrito') {
+  require_once __DIR__ . '/controllers/CarritoController.php';
+  (new CarritoController())->agregar();
+  exit;
+}
+
+// GET /carrito
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/carrito') {
+  require_once __DIR__ . '/controllers/CarritoController.php';
+  (new CarritoController())->index();
   exit;
 }
 

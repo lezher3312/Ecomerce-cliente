@@ -29,7 +29,7 @@
       </div>
     </div>
 
-    <!-- Demo de ilustración (puedes reemplazar por una imagen real) -->
+    <!-- Ilustración demo -->
     <div class="illus" aria-hidden="true">
       <div class="mock">
         <div class="bar">
@@ -55,20 +55,26 @@
       <h2>Más vendidos</h2>
       <p class="lead">Explora lo que otros compradores están pidiendo esta semana.</p>
     </div>
-    <a class="pill" href="/mas-vendidos">Ver todo →</a>
+    <a class="pill" href="<?= $basePath ?>/mas-vendidos">Ver todo →</a>
   </div>
   <div class="carousel">
-    <?php foreach($masVendidos ?? [] as $p): ?>
-      <article class="card card-prod">
-        <img src="<?= htmlspecialchars($p['imagen_principal']) ?>" alt="<?= htmlspecialchars($p['nombre']) ?>">
-        <div class="body">
-          <span class="badge"><?= htmlspecialchars($p['categoria']) ?></span>
-          <h3><?= htmlspecialchars($p['nombre']) ?></h3>
-          <div class="meta">Entrega aprox. 10–15 días</div>
-          <div class="price">US$ <?= number_format($p['precio'] ?? 0, 2) ?></div>
-        </div>
-      </article>
-    <?php endforeach; ?>
+    <?php if (!empty($masVendidos)): ?>
+      <?php foreach(array_slice($masVendidos, 0, 3) as $p): ?>
+        <article class="card card-prod">
+          <a href="<?= $basePath ?>/detalle?id=<?= $p['id_producto'] ?>">
+            <img src="/uploads/<?= htmlspecialchars($p['imagen_principal']) ?>" alt="<?= htmlspecialchars($p['nombre']) ?>">
+            <div class="body">
+              <span class="badge"><?= htmlspecialchars($p['categoria'] ?? '') ?></span>
+              <h3><?= htmlspecialchars($p['nombre']) ?></h3>
+              <div class="meta">Entrega aprox. 10–15 días</div>
+              <div class="price">US$ <?= number_format($p['precio'] ?? 0, 2) ?></div>
+            </div>
+          </a>
+        </article>
+      <?php endforeach; ?>
+    <?php else: ?>
+      <p>No hay productos más vendidos en este momento.</p>
+    <?php endif; ?>
   </div>
 </section>
 
@@ -79,20 +85,26 @@
       <h2>Novedades</h2>
       <p class="lead">Agregados recientemente al catálogo.</p>
     </div>
-    <a class="pill" href="/novedades">Ver catálogo →</a>
+    <a class="pill" href="<?= $basePath ?>/novedades">Ver catálogo →</a>
   </div>
   <div class="carousel">
-    <?php foreach($novedades ?? [] as $p): ?>
-      <article class="card card-prod">
-        <img src="<?= htmlspecialchars($p['imagen_principal']) ?>" alt="<?= htmlspecialchars($p['nombre']) ?>">
-        <div class="body">
-          <span class="badge"><?= htmlspecialchars($p['categoria']) ?></span>
-          <h3><?= htmlspecialchars($p['nombre']) ?></h3>
-          <div class="meta">Nuevo en catálogo</div>
-          <div class="price">US$ <?= number_format($p['precio'] ?? 0, 2) ?></div>
-        </div>
-      </article>
-    <?php endforeach; ?>
+    <?php if (!empty($novedades)): ?>
+      <?php foreach(array_slice($novedades, 0, 3) as $p): ?>
+        <article class="card card-prod">
+          <a href="<?= $basePath ?>/detalle?id=<?= $p['id_producto'] ?>">
+            <img src="/uploads/<?= htmlspecialchars($p['imagen_principal']) ?>" alt="<?= htmlspecialchars($p['nombre']) ?>">
+            <div class="body">
+              <span class="badge"><?= htmlspecialchars($p['categoria'] ?? '') ?></span>
+              <h3><?= htmlspecialchars($p['nombre']) ?></h3>
+              <div class="meta">Nuevo en catálogo</div>
+              <div class="price">US$ <?= number_format($p['precio'] ?? 0, 2) ?></div>
+            </div>
+          </a>
+        </article>
+      <?php endforeach; ?>
+    <?php else: ?>
+      <p>No hay productos nuevos en los últimos días.</p>
+    <?php endif; ?>
   </div>
 </section>
 
@@ -103,20 +115,26 @@
       <h2>Ofertas</h2>
       <p class="lead">Descuentos por tiempo limitado.</p>
     </div>
-    <a class="pill" href="/ofertas">Ver más →</a>
+    <a class="pill" href="<?= $basePath ?>/ofertas">Ver más →</a>
   </div>
   <div class="carousel">
-    <?php foreach($ofertas ?? [] as $p): ?>
-      <article class="card card-prod">
-        <img src="<?= htmlspecialchars($p['imagen_principal']) ?>" alt="<?= htmlspecialchars($p['nombre']) ?>">
-        <div class="body">
-          <span class="badge"><?= htmlspecialchars($p['categoria']) ?></span>
-          <h3><?= htmlspecialchars($p['nombre']) ?></h3>
-          <div class="meta">En oferta</div>
-          <div class="price">US$ <?= number_format($p['precio'] ?? 0, 2) ?></div>
-        </div>
-      </article>
-    <?php endforeach; ?>
+    <?php if (!empty($ofertas)): ?>
+      <?php foreach(array_slice($ofertas, 0, 3) as $p): ?>
+        <article class="card card-prod">
+          <a href="<?= $basePath ?>/detalle?id=<?= $p['id_producto'] ?>">
+            <img src="/uploads/<?= htmlspecialchars($p['imagen_principal']) ?>" alt="<?= htmlspecialchars($p['nombre']) ?>">
+            <div class="body">
+              <span class="badge"><?= htmlspecialchars($p['categoria'] ?? '') ?></span>
+              <h3><?= htmlspecialchars($p['nombre']) ?></h3>
+              <div class="meta">En oferta</div>
+              <div class="price">US$ <?= number_format($p['precio'] ?? 0, 2) ?></div>
+            </div>
+          </a>
+        </article>
+      <?php endforeach; ?>
+    <?php else: ?>
+      <p>No hay productos en oferta por el momento.</p>
+    <?php endif; ?>
   </div>
 </section>
 
