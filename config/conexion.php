@@ -3,11 +3,12 @@
 date_default_timezone_set('America/Guatemala');
 
 class Conexion {
-    private static $host = '82.197.82.45';
-    private static $db   = 'u474044222_gtis';
-    private static $user = 'u474044222_gtis';
+    private static $host = '212.1.208.1';
+    private static $db   = 'u256119552_gtis';
+    private static $user = 'u256119552_gris';
     private static $pass = 'Gtis2025/';
     private static $charset = 'utf8mb4';
+    
 
     private static $pdo = null;
 
