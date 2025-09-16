@@ -10,12 +10,12 @@
 <form method="POST" action="/login" class="formulario">
 
     <div class="formulario__campo">
-        <label for="email" class="formulario__label">Email</label>
+        <label for="usuario" class="formulario__label">Usuario de la Pagina</label>
         <input type="text"
           class="formulario__input"
-          placeholder="Tu Email"
-          id="email"
-          name="email"
+          placeholder="Tu Usuario"
+          id="usuario"
+          name="usuario"
         >
     </div>
 

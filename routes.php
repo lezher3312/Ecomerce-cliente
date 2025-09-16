@@ -34,6 +34,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($path === '/login')) {
   exit;
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($path === '/registro')) {
+  require_once __DIR__ . '/controllers/AuthController.php';
+  (new AuthController())->registro();
+  exit;
+}
+
 
 // 404 por defecto
 http_response_code(404);

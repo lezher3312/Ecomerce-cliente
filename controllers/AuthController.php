@@ -4,4 +4,8 @@ class AuthController {
 
     require __DIR__ . '/../views/auth/index.php';
   }
+  public function registro(){
+
+    require __DIR__ . '/../views/auth/registro.php';
+  }
 }

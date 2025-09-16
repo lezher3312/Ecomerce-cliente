@@ -20,13 +20,8 @@ $basePath  = ($scriptDir === '/' || $scriptDir === '.' || $scriptDir === '') ? '
     </div>
 
     <div class="nav-cta">
-<<<<<<< HEAD
-      <a href="/login" class="btn btn-outline">Iniciar sesión</a>
-      <button class="btn btn-primary">Crear cuenta</button>
-=======
       <a href="<?= $basePath ?>/login" class="btn btn-outline">Iniciar sesión</a>
       <a href="<?= $basePath ?>/registro" class="btn btn-primary">Crear cuenta</a>
->>>>>>> 5890bacdb9a4c29a2b3c5babdab9a935f61e3473
       <button class="hamb" aria-label="Menú">☰</button>
     </div>
   </nav>
