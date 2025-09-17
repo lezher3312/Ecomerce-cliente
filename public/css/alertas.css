@@ -1,0 +1,18 @@
+.alerta{
+    padding: 10px 10px 10px 30px;
+    text-transform: uppercase;
+    margin: 15px 0;
+    font-size: 15px;
+    font-weight: bold;
+}
+.alerta__error {
+    background-color: lighten(red, 60%);
+    border-left: 0.5rem solid red;
+    color: red;
+}
+
+.alerta__exito {
+    background-color: lighten(green, 60%);
+    border-left: 0.5rem solid green;
+    color: green;
+}

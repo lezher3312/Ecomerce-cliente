@@ -1,4 +1,6 @@
 <?php
+
+
 // Normaliza path y soporta subcarpeta automáticamente
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $scriptDir = rtrim(str_replace('\\','/', dirname($_SERVER['SCRIPT_NAME'])), '/'); // p.ej. /Global-client
@@ -54,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/detalle') {
 }
 
 
-
+//Autenticación
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($path === '/login')) {
   require_once __DIR__ . '/controllers/AuthController.php';
   (new AuthController())->index();
@@ -64,11 +66,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($path === '/login')) {
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($path === '/registro')) {
   require_once __DIR__ . '/controllers/AuthController.php';
   (new AuthController())->registro();
+  exit;
+}
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($path === '/registro')) {
+  require_once __DIR__ . '/controllers/AuthController.php';
+  (new AuthController())->registro();
+  exit;
 }
 
-if($_SERVER['REQUEST_METHOD'] === 'POST' && $path === '/registro'){
-  
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($path === '/mensaje')) {
+  require_once __DIR__ . '/controllers/AuthController.php';
+  (new AuthController())->mensaje();
+  exit;
 }
+
 
 // POST /carrito
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $path === '/carrito') {

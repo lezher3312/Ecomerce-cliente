@@ -1,7 +1,7 @@
 .registro{
     width: min(95%, 500px);
     margin: 0 auto;
-    min-height: 40vh;
+    min-height: 50vh;
 }
 
 .registro__heading{

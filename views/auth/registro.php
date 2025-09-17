@@ -1,133 +1,135 @@
 <?php require __DIR__ . '/../layouts/head.php'; ?>
 <link rel="stylesheet" href="<?= asset('css/registro.css') ?>">
 <link rel="stylesheet" href="<?= asset('css/formulario.css') ?>">
+<link rel="stylesheet" href="<?= asset('css/alertas.css') ?>">
+
 <?php require __DIR__ . '/../layouts/header.php'; ?>
 
 <main class="registro">
      <h2 class="registro__heading"> Registrar Nueva Cuenta</h2>
      <p class="registro__texto">Completa los campos para crear una nueva cuenta:</p>
     
-     <form method="POST" action="/login" class="formulario">
+     <?php require_once __DIR__ . '/../layouts/alertas.php'?>
+     
+<form method="POST" action="/registro" class="formulario" enctype="multipart/form-data">
          
     <div class="formulario__campo">
-        <label for="nombre" class="formulario__label">Nombre</label>
+        <label for="NOMBRE_COMPLETO" class="formulario__label">Nombre Completo</label>
         <input type="text"
           class="formulario__input"
           placeholder="Tu Nombre Completo"
-          id="nombre"
-          name="nombre"
+          id="NOMBRE_COMPLETO"
+          name="NOMBRE_COMPLETO"
+          value="<?php echo $usuario->NOMBRE_COMPLETO ?? '';?>"
         >
     </div>
 
      <div class="formulario__campo">
-        <label for="telefono" class="formulario__label">Telefono</label>
+        <label for="TELEFONO" class="formulario__label">Telefono</label>
         <input type="text"
           class="formulario__input"
           placeholder="Tu telefono"
-          id="telefono"
-          name="telefono"
+          id="TELEFONO"
+          name="TELEFONO"
+          value="<?php echo $usuario->TELEFONO ?? '';?>"
         >
     </div>
 
      <div class="formulario__campo">
-        <label for="direccion" class="formulario__label">Dirección</label>
+        <label for="DIRECCION" class="formulario__label">Dirección</label>
         <input type="text"
           class="formulario__input"
           placeholder="Tu Dirección"
-          id="direccion"
-          name="direccion"
+          id="DIRECCION"
+          name="DIRECCION"
+          value="<?php echo $usuario->DIRECCION ?? '';?>"
         >
     </div>
 
      <div class="formulario__campo">
-        <label for="ubicacion" class="formulario__label">Ubicación</label>
+        <label for="UBICACION" class="formulario__label">Ubicación</label>
         <input type="text"
           class="formulario__input"
           placeholder="Tu Ubicación"
-          id="ubicacion"
-          name="ubicacion"
+          id="UBICACION"
+          name="UBICACION"
+          value="<?php echo $usuario->UBICACION ?? '';?>"
         >
     </div>
 
      <div class="formulario__campo">
-        <label for="longitud" class="formulario__label">Longitud</label>
-        <input type="text"
-          class="formulario__input"
-          placeholder="Tu Logitud"
-          id="longitud"
-          name="longitud"
-        >
-    </div>
-
-     <div class="formulario__campo">
-        <label for="email" class="formulario__label">Email</label>
+        <label for="EMAIL" class="formulario__label">Email</label>
         <input type="text"
           class="formulario__input"
           placeholder="Tu Email"
-          id="email"
-          name="email"
+          id="EMAIL"
+          name="EMAIL"
+          value="<?php echo $usuario->EMAIL ?? '';?>"
         >
     </div>
 
      <div class="formulario__campo">
-        <label for="usuario_pagina" class="formulario__label">Usuario de la Pagina</label>
+        <label for="USUARIO_PAGINA" class="formulario__label">Usuario de la Pagina</label>
         <input type="text"
           class="formulario__input"
           placeholder="Tu Usuario de la Pagina"
-          id="usuario_pagina"
-          name="usuario_pagina"
+          id="USUARIO_PAGINA"
+          name="USUARIO_PAGINA"
+          value="<?php echo $usuario->USUARIO_PAGINA ?? '';?>"
         >
     </div>
 
     
      <div class="formulario__campo">
-        <label for="password" class="formulario__label">Password de la Pagina</label>
+        <label for="PASSWORD_PAGINA" class="formulario__label">Password de la Pagina</label>
         <input type="password"
           class="formulario__input"
           placeholder="Tu Password"
-          id="password"
-          name="password"
+          id="PASSWORD_PAGINA"
+          name="PASSWORD_PAGINA"
         >
     </div>
 
     
      <div class="formulario__campo">
-        <label for="password" class="formulario__label">Repetir Password de la Pagina</label>
+        <label for="PASSWORD" class="formulario__label">Repetir Password de la Pagina</label>
         <input type="password"
           class="formulario__input"
           placeholder="Repetir tu Password"
-          id="password"
-          name="password"
+          id="PASSWORD"
+          name="PASSWORD"
         >
     </div>
 
       <div class="formulario__campo">
-        <label for="nit" class="formulario__label">NIT</label>
+        <label for="NIT" class="formulario__label">NIT</label>
         <input type="text"
           class="formulario__input"
           placeholder="Tu Nit"
-          id="nit"
-          name="nit"
+          id="NIT"
+          name="NIT"
+          value="<?php echo $usuario->NIT ?? '';?>"
         >
     </div>
 
       <div class="formulario__campo">
-        <label for="direccion_entrega" class="formulario__label">Direccion de Entrega</label>
+        <label for="DIRECCION_ENTREGA" class="formulario__label">Direccion de Entrega</label>
         <input type="text"
           class="formulario__input"
           placeholder="Tu direccion de entrega"
-          id="direccion_entrega"
-          name="direccion_entrega"
+          id="DIRECCION_ENTREGA"
+          name="DIRECCION_ENTREGA"
+          value="<?php echo $usuario->DIRECCION_ENTREGA ?? '';?>"
         >
     </div>
 
       <div class="formulario__campo">
-        <label for="fotografia_cliente" class="formulario__label">Fotografía</label>
+        <label for="FOTOGRAFIA_CLIENTE" class="formulario__label">Fotografía</label>
         <input type="file"
           class="formulario__input"
           placeholder="Tu Fotografía"
-          id="fotografia_cliente"
-          name="fotografia_cliente"
+          id="FOTOGRAFIA_CLIENTE"
+          name="FOTOGRAFIA_CLIENTE"
         >
     </div>
 
