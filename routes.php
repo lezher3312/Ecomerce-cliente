@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($path === '/mensaje')) {
 
 
 // POST /carrito
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $path === '/carrito') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $path === '/carrito/agregar') {
   require_once __DIR__ . '/controllers/CarritoController.php';
   (new CarritoController())->agregar();
   exit;
@@ -94,7 +94,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/carrito') {
   (new CarritoController())->index();
   exit;
 }
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $path === '/carrito/actualizar') {
+  require_once __DIR__ . '/controllers/CarritoActualizarController.php';
+  (new CarritoActualizarController())->actualizar();
+  exit;
+}
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $path === '/carrito/eliminar') {
+  require_once __DIR__ . '/controllers/CarritoActualizarController.php';
+  (new CarritoActualizarController())->eliminar();
+  exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/registro/pedido') {
+    require_once __DIR__ . '/controllers/registroPedidoController.php';
+    (new RegistroPedidoController())->index();
+    exit;
+}
+
+// POST /registro/pedido
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $path === '/registro/pedido') {
+    require_once __DIR__ . '/controllers/registroPedidoController.php';
+    (new RegistroPedidoController())->registrar();
+    exit;
+}
+
+// GET /envio
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/envio') {
+    require_once __DIR__ . '/controllers/envioController.php';
+    (new EnvioController())->index();
+    exit;
+}
+
+// POST /envio
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $path === '/envio') {
+    require_once __DIR__ . '/controllers/envioController.php';
+    (new EnvioController())->guardar();
+    exit;
+}
 
 // 404 por defecto
 http_response_code(404);
