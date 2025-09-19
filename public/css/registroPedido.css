@@ -4,17 +4,31 @@
    ================================ */
 
 :root{
+  /* Paleta base (tu azul corporativo) */
   --rp-bg: #0b3a8b;
   --rp-bg-2: #0a3380;
   --rp-primary: #0b3a8b;
   --rp-primary-600:#0a3380;
+
+  /* Neutros */
   --rp-border:#e5e7eb;
   --rp-soft:#f8fafc;
   --rp-text:#0f172a;
   --rp-text-2:#475569;
+
+  /* Accesibilidad / foco */
   --rp-ring: #3b82f6;
+
+  /* Estados */
   --rp-danger:#ef4444;
   --rp-muted:#94a3b8;
+
+  /* NUEVO: ajustes solicitados */
+  --rp-title:#0a3380;          /* Título H1 un poco más oscuro */
+  --rp-input-bg:#F9FBFF;       /* Inputs más claros */
+  --rp-input-border:#D6DEE9;   /* Borde suave */
+  --rp-input-text:#0F1B32;     /* Texto de input */
+  --rp-placeholder:#7A8AA3;    /* Placeholder suave */
 }
 
 @media (prefers-color-scheme: dark){
@@ -25,16 +39,24 @@
     --rp-text-2:#94a3b8;
     --rp-bg:#0b3a8b;
     --rp-bg-2:#0a3380;
+
+    /* Overrides para dark: inputs menos “negros” */
+    --rp-input-bg:#172236;
+    --rp-input-border:#2B3B52;
+    --rp-input-text:#EAF1FF;
+    --rp-placeholder:#9FB1C8;
+    --rp-title:#8FB0FF; /* título un poco más claro para resaltar */
   }
 }
 
 /* Título */
 main.container > h1{
-  color: var(--rp-text);
+  color: var(--rp-title);
   font-size: clamp(1.35rem, 2.2vw, 1.9rem);
   font-weight: 800;
   letter-spacing: .2px;
   margin-bottom: 14px;
+  text-shadow: 0 1px 0 rgba(0,0,0,.04);
 }
 
 /* Alertas */
@@ -89,13 +111,19 @@ form[action*="/registro/pedido"] input[type="file"],
 form[action*="/registro/pedido"] textarea,
 form[action*="/registro/pedido"] select{
   width: 100%;
-  background: #fff;
-  color: var(--rp-text);
-  border: 1px solid var(--rp-border);
+  background: var(--rp-input-bg);
+  color: var(--rp-input-text);
+  border: 1px solid var(--rp-input-border);
   border-radius: 10px;
   padding: .65rem .75rem;
   outline: none;
   transition: box-shadow .15s ease, border-color .15s ease, transform .03s ease;
+}
+
+/* Placeholder más suave */
+form[action*="/registro/pedido"] ::placeholder{
+  color: var(--rp-placeholder);
+  opacity: 1;
 }
 
 /* Focus ring bonito */
@@ -119,16 +147,16 @@ form[action*="/registro/pedido"] input[type="file"]{
 }
 form[action*="/registro/pedido"] input[type="file"]::file-selector-button{
   margin-right: 10px;
-  border: 1px solid var(--rp-border);
+  border: 1px solid var(--rp-input-border);
   border-radius: 8px;
   padding: .5rem .8rem;
-  background: var(--rp-soft);
-  color: var(--rp-text-2);
+  background: #EEF3FF;           /* más claro que el input */
+  color: #2B3B57;
   cursor: pointer;
   transition: background .15s ease, transform .03s ease;
 }
 form[action*="/registro/pedido"] input[type="file"]::file-selector-button:hover{
-  background: #eef2ff;
+  background: #E3EBFF;
 }
 
 /* Hint text */
@@ -175,7 +203,7 @@ form[action*="/registro/pedido"].card .btn{
   justify-content: center;
 }
 
-/* Inputs grandes que ocupan dos columnas (coincide con tu inline), 
+/* Inputs grandes que ocupan dos columnas (coincide con tu inline),
    pero en móvil se vuelven 1 col sin romper nada */
 @media (min-width: 681px){
   /* Seleccionamos los div que ya tienen inline "grid-column: span 2;"
@@ -210,15 +238,19 @@ main.container{
   form[action*="/registro/pedido"] input[type="file"],
   form[action*="/registro/pedido"] textarea,
   form[action*="/registro/pedido"] select{
-    background: #0f172a;
-    border-color: #24314a;
-    color: var(--rp-text);
+    background: var(--rp-input-bg);     /* #172236 */
+    border-color: var(--rp-input-border);/* #2B3B52 */
+    color: var(--rp-input-text);         /* #EAF1FF */
+  }
+
+  form[action*="/registro/pedido"] ::placeholder{
+    color: var(--rp-placeholder);        /* #9FB1C8 */
   }
 
   form[action*="/registro/pedido"] input[type="file"]::file-selector-button{
-    background: #101a33;
-    border-color: #223054;
-    color: #c5d3ee;
+    background: #121B34;
+    border-color: var(--rp-input-border);
+    color: #C9D6F6;
   }
 
   .alert{

@@ -66,7 +66,7 @@ class RegistroPedidoController
         if ($this->model->existeUsuario($usuario)) $errores[] = 'El usuario ya está en uso.';
 
         // Procesar foto (opcional) — acepta cualquier image/*
-        $fotoRelPath = ''; // evitar NOT NULL si tu columna no permite NULL
+        $fotoRelPath = '';
         if (!empty($_FILES['foto']) && is_uploaded_file($_FILES['foto']['tmp_name'])) {
             $file  = $_FILES['foto'];
             $finfo = new finfo(FILEINFO_MIME_TYPE);
@@ -100,8 +100,6 @@ class RegistroPedidoController
 
                 if (move_uploaded_file($file['tmp_name'], $destAbs)) {
                     $fotoRelPath = '/public/imgCliente/' . $fileName; // ruta pública
-                } else {
-                    // si falla, dejamos '' y continuamos sin foto
                 }
             }
         }
@@ -120,7 +118,7 @@ class RegistroPedidoController
             'usuario'        => $usuario,
             'passwordPlano'  => $pass,
             'nit'            => $nit,
-            'direccion'      => $direccion, // 👈 guardar en DIRECCION
+            'direccion'      => $direccion,
             'foto'           => $fotoRelPath,
         ]);
 
@@ -130,14 +128,14 @@ class RegistroPedidoController
             $this->redirect($this->basePath . '/registro/pedido');
         }
 
-        // Autenticar sesión
-        $_SESSION['ID_CLIENTE'] = (int)$idCliente;
+        // Autenticar sesión (guardar con clave 'ID')
+        $_SESSION['ID'] = (int)$idCliente;
         $_SESSION['cliente'] = [
-            'ID_CLIENTE'       => (int)$idCliente,
-            'NOMBRE_COMPLETO'  => $nombre,
-            'EMAIL'            => $email,
-            'NIT'              => $nit,
-            'DIRECCION'        => $direccion,      // 👈 guardamos DIRECCION en sesión
+            'ID'                 => (int)$idCliente,          // 👈 ahora 'ID'
+            'NOMBRE_COMPLETO'    => $nombre,
+            'EMAIL'              => $email,
+            'NIT'                => $nit,
+            'DIRECCION'          => $direccion,
             'FOTOGRAFIA_CLIENTE' => $fotoRelPath,
         ];
 
@@ -154,9 +152,10 @@ class RegistroPedidoController
 
     private function resolverIdCliente(): ?int
     {
-        if (!empty($_SESSION['cliente']['ID_CLIENTE'])) return (int)$_SESSION['cliente']['ID_CLIENTE'];
-        if (!empty($_SESSION['usuarios']['id_cliente'])) return (int)$_SESSION['usuarios']['id_cliente'];
-        if (!empty($_SESSION['ID_CLIENTE']))            return (int)$_SESSION['ID_CLIENTE'];
+        // Corregido: usar 'ID' y devolver ese mismo campo
+        if (!empty($_SESSION['cliente']['ID'])) return (int)$_SESSION['cliente']['ID'];
+        if (!empty($_SESSION['usuarios']['id'])) return (int)$_SESSION['usuarios']['id'];
+        if (!empty($_SESSION['ID']))             return (int)$_SESSION['ID'];
         return null;
     }
 

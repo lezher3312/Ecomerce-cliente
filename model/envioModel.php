@@ -15,10 +15,10 @@ class EnvioModel
     public function getCliente(int $idCliente): array
     {
         $st = $this->pdo->prepare(
-            "SELECT ID_CLIENTE, NOMBRE_COMPLETO, TELEFONO, DIRECCION, UBICACION,
+            "SELECT ID, NOMBRE_COMPLETO, TELEFONO, DIRECCION, UBICACION,
                     LONGITUD, LATITUD, EMAIL, NIT, DIRECCION_ENTREGA, FOTOGRAFIA_CLIENTE
                FROM cliente
-              WHERE ID_CLIENTE = :id
+              WHERE ID= :id
               LIMIT 1"
         );
         $st->execute([':id' => $idCliente]);

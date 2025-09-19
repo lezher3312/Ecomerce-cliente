@@ -166,14 +166,17 @@ class CarritoController
 
     private function resolverIdCliente(): ?int
     {
-        if (!empty($_SESSION['cliente']['ID_CLIENTE'])) {
-            return (int)$_SESSION['cliente']['ID_CLIENTE'];
+        // Ahora buscamos siempre 'ID' cuando viene de la tabla/objeto cliente
+        if (!empty($_SESSION['cliente']['ID'])) {
+            return (int)$_SESSION['cliente']['ID'];
         }
-        if (!empty($_SESSION['usuarios']['id_cliente'])) {
-            return (int)$_SESSION['usuarios']['id_cliente'];
+        // Si guardas el ID del cliente dentro de usuarios, usa 'id'
+        if (!empty($_SESSION['usuarios']['id'])) {
+            return (int)$_SESSION['usuarios']['id'];
         }
-        if (!empty($_SESSION['ID_CLIENTE'])) {
-            return (int)$_SESSION['ID_CLIENTE'];
+        // Fallback genérico a $_SESSION['ID']
+        if (!empty($_SESSION['ID'])) {
+            return (int)$_SESSION['ID'];
         }
         return null;
     }

@@ -9,7 +9,7 @@ unset($_SESSION['form_registro_old']);
 require __DIR__ . '/../layouts/head.php';
 require __DIR__ . '/../layouts/header.php';
 ?>
-<link rel="stylesheet" href="<?= asset('css/registroPedido.css') ?>">
+<link rel="stylesheet" href="<?= asset('pblic/css/registroPedido.css') ?>">
 
 <main class="container" style="max-width:960px; margin:24px auto;">
   <h1>Crear cuenta para continuar</h1>
