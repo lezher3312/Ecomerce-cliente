@@ -10,7 +10,8 @@
 
        <?php require_once __DIR__ . '/../layouts/alertas.php'?>
 
-<form method="POST" action="/login" class="formulario">
+<form method="POST" action="<?= $basePath ?>/login" class="formulario">
+
 
     <div class="formulario__campo">
         <label for="USUARIO_PAGINA" class="formulario__label">Usuario de la Pagina</label>
