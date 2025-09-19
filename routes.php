@@ -63,6 +63,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($path === '/login')) {
   exit;
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($path === '/login')) {
+  require_once __DIR__ . '/controllers/AuthController.php';
+  (new AuthController())->index();
+  exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($path === '/registro')) {
   require_once __DIR__ . '/controllers/AuthController.php';
   (new AuthController())->registro();
@@ -80,6 +86,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($path === '/mensaje')) {
   exit;
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($path === '/confirmar-cuenta')) {
+  require_once __DIR__ . '/controllers/AuthController.php';
+  (new AuthController())->confirmar();
+  exit;
+}
 
 // POST /carrito
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $path === '/carrito') {

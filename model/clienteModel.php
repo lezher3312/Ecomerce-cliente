@@ -9,11 +9,11 @@ use PDO;
      class ClienteModel extends ActiveRecord
      {     
        protected static $tabla = 'cliente';
-       protected static $columnasDB = ['ID_CLIENTE', 'NOMBRE_COMPLETO', 'TELEFONO', 'DIRECCION', 
+       protected static $columnasDB = ['ID', 'NOMBRE_COMPLETO', 'TELEFONO', 'DIRECCION', 
        'UBICACION', 'LONGITUD', 'LATITUD', 'EMAIL', 'USUARIO_PAGINA', 'PASSWORD_PAGINA', 'NIT',
      'DIRECCION_ENTREGA', 'FOTOGRAFIA_CLIENTE', 'FECHA_CREACION', 'ESTADO', 'TOKEN', 'CONFIRMADO'];
 
-     public $ID_CLIENTE;
+     public $ID;
      public $NOMBRE_COMPLETO;
      public $TELEFONO;
      public $DIRECCION;
@@ -34,7 +34,7 @@ use PDO;
 
      public function __construct($args = [])
     {
-        $this->ID_CLIENTE = $args['id'] ?? null;
+        $this->ID = $args['id'] ?? null;
         $this->NOMBRE_COMPLETO = $args['NOMBRE_COMPLETO'] ?? '';
         $this->TELEFONO = $args['TELEFONO'] ?? '';
         $this->DIRECCION = $args['DIRECCION'] ?? '';
@@ -53,7 +53,17 @@ use PDO;
         $this->TOKEN = $args['TOKEN'] ?? '';
         $this->CONFIRMADO = $args['CONFIRMADO'] ?? 0;
     }
+     public function validarLogin() {
+        if(!$this->USUARIO_PAGINA) {
+            self::$alertas['error'][] = 'El Usuario es Obligatorio';
+        }
+  
+        if(!$this->PASSWORD_PAGINA) {
+            self::$alertas['error'][] = 'El Password no puede ir vacio';
+        }
+        return self::$alertas;
 
+    }
     // Validación para cuentas nuevas
     public function validar_cuenta() {
         if(!$this->NOMBRE_COMPLETO) {

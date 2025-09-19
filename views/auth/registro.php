@@ -138,7 +138,7 @@
      </form>
    
      <div class="acciones">
-        <a href="/registro" class="acciones__enlace">¿Ya tienes cuenta? Iniciar Sesión</a>
+        <a href="/login" class="acciones__enlace">¿Ya tienes cuenta? Iniciar Sesión</a>
         <a href="/olvide" class="acciones__enlace">¿Olvidaste tu Password?</a>
     </div>
 

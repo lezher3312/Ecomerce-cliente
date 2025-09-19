@@ -63,7 +63,7 @@ class ActiveRecord {
     public function atributos() {
         $atributos = [];
         foreach (static::$columnasDB as $columna) {
-            if ($columna === 'id') continue;
+            if ($columna === 'ID') continue;
             $atributos[$columna] = $this->$columna ?? null;
         }
         return $atributos;
@@ -78,26 +78,26 @@ class ActiveRecord {
     }
 
     public function guardar() {
-        return $this->id ? $this->actualizar() : $this->crear();
+        return $this->ID ? $this->actualizar() : $this->crear();
     }
 
     public static function all($orden = 'DESC') {
-        $query = "SELECT * FROM " . static::$tabla . " ORDER BY id {$orden}";
+        $query = "SELECT * FROM " . static::$tabla . " ORDER BY ID {$orden}";
         return self::consultarSQL($query);
     }
 
-    public static function find($id) {
+    public static function find($ID) {
         self::setDB();
-        $query = "SELECT * FROM " . static::$tabla . " WHERE id = :id LIMIT 1";
+        $query = "SELECT * FROM " . static::$tabla . " WHERE ID = :ID LIMIT 1";
         $stmt = self::$db->prepare($query);
-        $stmt->execute(['id' => $id]);
+        $stmt->execute(['ID' => $ID]);
         $registro = $stmt->fetch(PDO::FETCH_ASSOC);
         return $registro ? static::crearObjeto($registro) : null;
     }
 
     public static function get($limite) {
         self::setDB();
-        $query = "SELECT * FROM " . static::$tabla . " ORDER BY id DESC LIMIT :limite";
+        $query = "SELECT * FROM " . static::$tabla . " ORDER BY ID DESC LIMIT :limite";
         $stmt = self::$db->prepare($query);
         $stmt->bindValue(':limite', (int)$limite, PDO::PARAM_INT);
         $stmt->execute();
@@ -118,7 +118,7 @@ class ActiveRecord {
         $stmt = self::$db->prepare($query);
         $resultado = $stmt->execute($atributos);
 
-        $this->id = self::$db->lastInsertId();
+        $this->ID = self::$db->lastInsertId();
         return $resultado;
     }
 
@@ -131,17 +131,17 @@ class ActiveRecord {
         }
         $query = "UPDATE " . static::$tabla 
                . " SET " . join(', ', $valores)
-               . " WHERE id = :id LIMIT 1";
-        $atributos['id'] = $this->id;
+               . " WHERE ID = :ID LIMIT 1";
+        $atributos['ID'] = $this->ID;
         $stmt = self::$db->prepare($query);
         return $stmt->execute($atributos);
     }
 
     public function eliminar() {
         self::setDB();
-        $query = "DELETE FROM " . static::$tabla . " WHERE id = :id LIMIT 1";
+        $query = "DELETE FROM " . static::$tabla . " WHERE ID = :ID LIMIT 1";
         $stmt = self::$db->prepare($query);
-        return $stmt->execute(['id' => $this->id]);
+        return $stmt->execute(['ID' => $this->ID]);
     }
 
     public static function where($columna, $valor) {
