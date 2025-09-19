@@ -1,0 +1,229 @@
+/* ================================
+   Registro de Pedido (scoped)
+   Archivo: public/css/registroPedido.css
+   ================================ */
+
+:root{
+  --rp-bg: #0b3a8b;
+  --rp-bg-2: #0a3380;
+  --rp-primary: #0b3a8b;
+  --rp-primary-600:#0a3380;
+  --rp-border:#e5e7eb;
+  --rp-soft:#f8fafc;
+  --rp-text:#0f172a;
+  --rp-text-2:#475569;
+  --rp-ring: #3b82f6;
+  --rp-danger:#ef4444;
+  --rp-muted:#94a3b8;
+}
+
+@media (prefers-color-scheme: dark){
+  :root{
+    --rp-border:#1f2937;
+    --rp-soft:#0b1220;
+    --rp-text:#e5eefb;
+    --rp-text-2:#94a3b8;
+    --rp-bg:#0b3a8b;
+    --rp-bg-2:#0a3380;
+  }
+}
+
+/* Título */
+main.container > h1{
+  color: var(--rp-text);
+  font-size: clamp(1.35rem, 2.2vw, 1.9rem);
+  font-weight: 800;
+  letter-spacing: .2px;
+  margin-bottom: 14px;
+}
+
+/* Alertas */
+.alert{
+  border-radius: .75rem;
+  padding: .85rem 1rem;
+  border: 1px solid var(--rp-border);
+  background: #fff6f6;
+  color: #7f1d1d;
+}
+.alert.alert-danger{
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #7f1d1d;
+}
+
+/* ---- CARD/FORMA (scope) ---- */
+form[action*="/registro/pedido"].card{
+  background: #fff;
+  border: 1px solid var(--rp-border);
+  border-radius: 14px;
+  box-shadow: 0 10px 25px rgba(2,12,27,.06);
+  padding: 18px;
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* coincide con tu inline */
+  gap: 14px;
+}
+
+/* En móviles forzamos una columna */
+@media (max-width: 680px){
+  form[action*="/registro/pedido"].card{
+    grid-template-columns: 1fr !important;
+    padding: 14px;
+    gap: 12px;
+  }
+}
+
+/* Etiquetas e inputs */
+form[action*="/registro/pedido"] label{
+  display: inline-block;
+  font-weight: 600;
+  color: var(--rp-text-2);
+  margin-bottom: 6px;
+}
+
+form[action*="/registro/pedido"] input[type="text"],
+form[action*="/registro/pedido"] input[type="email"],
+form[action*="/registro/pedido"] input[type="password"],
+form[action*="/registro/pedido"] input[type="tel"],
+form[action*="/registro/pedido"] input[type="number"],
+form[action*="/registro/pedido"] input[type="file"],
+form[action*="/registro/pedido"] textarea,
+form[action*="/registro/pedido"] select{
+  width: 100%;
+  background: #fff;
+  color: var(--rp-text);
+  border: 1px solid var(--rp-border);
+  border-radius: 10px;
+  padding: .65rem .75rem;
+  outline: none;
+  transition: box-shadow .15s ease, border-color .15s ease, transform .03s ease;
+}
+
+/* Focus ring bonito */
+form[action*="/registro/pedido"] input:focus,
+form[action*="/registro/pedido"] textarea:focus,
+form[action*="/registro/pedido"] select:focus{
+  border-color: var(--rp-ring);
+  box-shadow: 0 0 0 4px rgba(59,130,246,.15);
+}
+
+/* Hover sutil */
+form[action*="/registro/pedido"] input:hover,
+form[action*="/registro/pedido"] textarea:hover,
+form[action*="/registro/pedido"] select:hover{
+  border-color: #cbd5e1;
+}
+
+/* File input (botón) */
+form[action*="/registro/pedido"] input[type="file"]{
+  padding: .35rem .5rem;
+}
+form[action*="/registro/pedido"] input[type="file"]::file-selector-button{
+  margin-right: 10px;
+  border: 1px solid var(--rp-border);
+  border-radius: 8px;
+  padding: .5rem .8rem;
+  background: var(--rp-soft);
+  color: var(--rp-text-2);
+  cursor: pointer;
+  transition: background .15s ease, transform .03s ease;
+}
+form[action*="/registro/pedido"] input[type="file"]::file-selector-button:hover{
+  background: #eef2ff;
+}
+
+/* Hint text */
+form[action*="/registro/pedido"] small{
+  color: var(--rp-muted);
+}
+
+/* Botones (mejora visual si ya existen clases .btn) */
+.btn{
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  border-radius: .7rem;
+  border: 1px solid var(--rp-border);
+  padding: .6rem 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform .03s ease, filter .2s ease, background .2s ease, border-color .2s ease;
+  user-select: none;
+}
+.btn:active{ transform: translateY(1px) }
+
+.btn-primary{
+  background: var(--rp-primary);
+  color: #fff;
+  border-color: var(--rp-primary);
+}
+.btn-primary:hover{ filter: brightness(.96) }
+.btn-primary:focus{ box-shadow: 0 0 0 4px rgba(11,58,139,.18) }
+
+.btn-outline{
+  background: #fff;
+  color: var(--rp-primary);
+  border-color: var(--rp-primary);
+}
+.btn-outline:hover{
+  background: #f1f5ff;
+}
+
+/* Fila de acciones (último row) */
+form[action*="/registro/pedido"].card .btn{
+  min-width: 180px;
+  justify-content: center;
+}
+
+/* Inputs grandes que ocupan dos columnas (coincide con tu inline), 
+   pero en móvil se vuelven 1 col sin romper nada */
+@media (min-width: 681px){
+  /* Seleccionamos los div que ya tienen inline "grid-column: span 2;"
+     y les damos un pequeño ajuste de separación vertical */
+  form[action*="/registro/pedido"].card > div[style*="grid-column: span 2"] {
+    margin-top: 2px;
+  }
+}
+
+/* Bordes y sombras suaves para el main (opcional, solo si tu layout lo permite) */
+main.container{
+  animation: rp-fade-in .25s ease-out both;
+}
+@keyframes rp-fade-in{
+  from{ opacity: 0; transform: translateY(4px) }
+  to{ opacity: 1; transform: translateY(0) }
+}
+
+/* Dark mode refinements */
+@media (prefers-color-scheme: dark){
+  form[action*="/registro/pedido"].card{
+    background: #0b1220;
+    border-color: var(--rp-border);
+    box-shadow: 0 10px 25px rgba(0,0,0,.35);
+  }
+
+  form[action*="/registro/pedido"] input[type="text"],
+  form[action*="/registro/pedido"] input[type="email"],
+  form[action*="/registro/pedido"] input[type="password"],
+  form[action*="/registro/pedido"] input[type="tel"],
+  form[action*="/registro/pedido"] input[type="number"],
+  form[action*="/registro/pedido"] input[type="file"],
+  form[action*="/registro/pedido"] textarea,
+  form[action*="/registro/pedido"] select{
+    background: #0f172a;
+    border-color: #24314a;
+    color: var(--rp-text);
+  }
+
+  form[action*="/registro/pedido"] input[type="file"]::file-selector-button{
+    background: #101a33;
+    border-color: #223054;
+    color: #c5d3ee;
+  }
+
+  .alert{
+    background: #2a0f10;
+    border-color: #4b1b1c;
+    color: #ffd6d6;
+  }
+}

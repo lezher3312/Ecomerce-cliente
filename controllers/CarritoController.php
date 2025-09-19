@@ -1,5 +1,7 @@
 <?php
 // controllers/CarritoController.php
+declare(strict_types=1);
+
 class CarritoController
 {
     private string $viewsPath;
@@ -17,7 +19,7 @@ class CarritoController
 
         $this->basePath = defined('BASE_PATH')
             ? rtrim(BASE_PATH, '/')
-            : rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
+            : rtrim(dirname($_SERVER['SCRIPT_NAME']) ?: '', '/');
 
         require_once $root . '/config/conexion.php';
         require_once $root . '/model/CarritoModel.php';
@@ -31,35 +33,31 @@ class CarritoController
         $model     = new CarritoModel($this->pdo);
         $idCliente = $this->resolverIdCliente();
 
-        // Si NO hay sesión de cliente: mostrar carrito vacío (sin redirigir)
-        if (!$idCliente) {
-            $items    = [];
-            $count    = 0;
-            $subtotal = 0.0;
-            $total    = 0.0;
-
-            // Header / layout
-            $cartCount = 0;
-            $basePath  = $this->basePath;
-            $pageTitle = 'Mi carrito';
-            $cssExtra  = $this->basePath . '/public/css/carrito.css';
-
-            require $this->viewsPath . '/layouts/head.php';
-            require $this->viewsPath . '/layouts/header.php';
-            require $this->viewsPath . '/paginas/carrito.php'; // tu vista ya muestra el mensaje/vínculos
-            require $this->viewsPath . '/layouts/footer.php';
-            return;
+        // Si hay sesión y existía carrito de invitado, fusión a BD y limpiar sesión
+        if ($idCliente && !empty($_SESSION['cart']) && is_array($_SESSION['cart'])) {
+            $model->mergeGuestCartToDb((int)$idCliente, $_SESSION['cart']);
+            $_SESSION['cart'] = [];
         }
 
-        // Con cliente: cargar (o no) su cotización abierta y pintar items
-        $idCot    = $model->getCotizacionAbierta($idCliente); // puede ser null
-        $items    = $idCot ? $model->getItems($idCot) : [];
-        $count    = array_sum(array_map(fn($x) => (int)$x['cantidad'], $items));
-        $subtotal = array_sum(array_map(fn($x) => (float)$x['subtotal'], $items));
-        $total    = $subtotal;
+        if (!$idCliente) {
+            // Invitado: pintar desde sesión
+            $guestCart = (!empty($_SESSION['cart']) && is_array($_SESSION['cart'])) ? $_SESSION['cart'] : [];
+            if ($guestCart) {
+                [$items, $count, $subtotal, $total] = $model->sessionCartToItems($guestCart);
+            } else {
+                $items = []; $count = 0; $subtotal = 0.0; $total = 0.0;
+            }
+        } else {
+            // Autenticado: leer desde BD (cotización WEB abierta)
+            $idCot    = $model->getCotizacionAbierta((int)$idCliente); // puede ser null
+            $items    = $idCot ? $model->getItems($idCot) : [];
+            $count    = array_sum(array_map(fn($x) => (int)$x['cantidad'], $items));
+            $subtotal = array_sum(array_map(fn($x) => (float)$x['subtotal'], $items));
+            $total    = $subtotal;
+        }
 
         // Header / layout
-        $cartCount = $count;
+        $cartCount = $count ?? 0;
         $basePath  = $this->basePath;
         $pageTitle = 'Mi carrito';
         $cssExtra  = $this->basePath . '/public/css/carrito.css';
@@ -70,32 +68,35 @@ class CarritoController
         require $this->viewsPath . '/layouts/footer.php';
     }
 
-    // POST /carrito  => agregar/actualizar línea en det_cotizacion_producto
+    // POST /carrito/agregar  (agregar/actualizar línea)
     public function agregar(): void
     {
         $idProducto = filter_input(INPUT_POST, 'id_producto', FILTER_VALIDATE_INT);
         $cantidad   = filter_input(INPUT_POST, 'cantidad', FILTER_VALIDATE_INT);
-        $cantidad   = ($cantidad && $cantidad > 0) ? $cantidad : 1;
-
-        // Cliente obligatorio para agregar
-        $idCliente = $this->resolverIdCliente();
-        if (!$idCliente) {
-            $_SESSION['flash_cart'] = 'Debes iniciar sesión para agregar al carrito.';
-            $this->redirect($this->basePath . '/login?next=/catalogo');
-        }
+        $cantidad   = ($cantidad && $cantidad > 0) ? (int)$cantidad : 1;
 
         if (!$idProducto) {
             $_SESSION['flash_cart'] = 'Producto inválido.';
             $this->redirect($this->basePath . '/catalogo?err=producto');
         }
 
-        $model = new CarritoModel($this->pdo);
+        $model     = new CarritoModel($this->pdo);
+        $idCliente = $this->resolverIdCliente();
 
-        // Obtener o crear cotización abierta
-        $idCot = $model->getOrCreateCotizacionAbierta($idCliente);
+        if (!$idCliente) {
+            // Invitado → guardar en sesión
+            if (empty($_SESSION['cart']) || !is_array($_SESSION['cart'])) {
+                $_SESSION['cart'] = [];
+            }
+            $_SESSION['cart'][(int)$idProducto] = (int)(($_SESSION['cart'][(int)$idProducto] ?? 0) + $cantidad);
 
-        // Agregar/actualizar detalle
-        $ok = $model->addOrUpdateItem($idCot, $idProducto, $cantidad);
+            $_SESSION['flash_cart'] = 'Producto agregado al carrito.';
+            $this->redirect($this->basePath . '/carrito', 303);
+        }
+
+        // Autenticado → guardar en BD
+        $idCot = $model->getOrCreateCotizacionAbierta((int)$idCliente);
+        $ok    = $model->addOrUpdateItem($idCot, (int)$idProducto, $cantidad);
 
         if ($ok) {
             $model->recalcularTotal($idCot);
@@ -105,6 +106,62 @@ class CarritoController
             $_SESSION['flash_cart'] = 'No se pudo agregar el producto.';
             $this->redirect($this->basePath . '/catalogo?err=agregar');
         }
+    }
+
+    // POST /carrito/actualizar  (cambiar cantidad)
+    public function actualizar(): void
+    {
+        $idProducto = filter_input(INPUT_POST, 'id_producto', FILTER_VALIDATE_INT);
+        $cantidad   = filter_input(INPUT_POST, 'cantidad', FILTER_VALIDATE_INT);
+        $cantidad   = ($cantidad && $cantidad > 0) ? (int)$cantidad : 1;
+
+        if (!$idProducto) {
+            $_SESSION['flash_cart'] = 'Producto inválido.';
+            $this->redirect($this->basePath . '/carrito');
+        }
+
+        $model     = new CarritoModel($this->pdo);
+        $idCliente = $this->resolverIdCliente();
+
+        if ($idCliente) {
+            $idCot = $model->getOrCreateCotizacionAbierta((int)$idCliente);
+            $ok    = $model->updateQty($idCot, (int)$idProducto, $cantidad);
+            if ($ok) {
+                $model->recalcularTotal($idCot);
+            }
+        } else {
+            $model->sessionUpdateQty((int)$idProducto, $cantidad);
+        }
+
+        $_SESSION['flash_cart'] = 'Cantidad actualizada.';
+        $this->redirect($this->basePath . '/carrito', 303);
+    }
+
+    // POST /carrito/eliminar  (eliminar línea)
+    public function eliminar(): void
+    {
+        $idProducto = filter_input(INPUT_POST, 'id_producto', FILTER_VALIDATE_INT);
+
+        if (!$idProducto) {
+            $_SESSION['flash_cart'] = 'Producto inválido.';
+            $this->redirect($this->basePath . '/carrito');
+        }
+
+        $model     = new CarritoModel($this->pdo);
+        $idCliente = $this->resolverIdCliente();
+
+        if ($idCliente) {
+            $idCot = $model->getCotizacionAbierta((int)$idCliente);
+            if ($idCot) {
+                $model->removeItem($idCot, (int)$idProducto);
+                $model->recalcularTotal($idCot);
+            }
+        } else {
+            $model->sessionRemoveItem((int)$idProducto);
+        }
+
+        $_SESSION['flash_cart'] = 'Producto eliminado del carrito.';
+        $this->redirect($this->basePath . '/carrito', 303);
     }
 
     private function resolverIdCliente(): ?int
