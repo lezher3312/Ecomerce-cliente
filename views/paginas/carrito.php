@@ -25,9 +25,9 @@ $cssExtra = $cssExtra ?? ($basePath ? "$basePath/public/css/carrito.css" : "/pub
       <h2>Tu carrito está vacío</h2>
       <p>Parece que aún no agregaste productos.</p>
       <div class="actions" style="display:flex; gap:8px; flex-wrap:wrap;">
-        <a class="btn btn-primary" href="<?= htmlspecialchars($basePath) ?>/catalogo">Ir al catálogo</a>
-        <a class="btn btn-outline" href="<?= htmlspecialchars($basePath) ?>/ofertas">Ver ofertas</a>
-        <a class="btn btn-outline" href="<?= htmlspecialchars($basePath) ?>/login">Iniciar sesión</a>
+        <a class="btn btn-primary" href="<?= htmlspecialchars($basePath) ?>catalogo">Ir al catálogo</a>
+        <a class="btn btn-outline" href="<?= htmlspecialchars($basePath) ?>ofertas">Ver ofertas</a>
+        <a class="btn btn-outline" href="<?= htmlspecialchars($basePath) ?>login">Iniciar sesión</a>
       </div>
     </div>
   <?php else: ?>

@@ -72,18 +72,6 @@ use PDO;
         if(!$this->TELEFONO) {
             self::$alertas['error'][] = 'El Telefono es Obligatorio';
         }
-        if(!$this->DIRECCION) {
-            self::$alertas['error'][] = 'La dirección es Obligatorio';
-        }
-         if(!$this->UBICACION) {
-            self::$alertas['error'][] = 'La Ubicación es Obligatorio';
-        }
-        if(!$this->LONGITUD) {
-            self::$alertas['error'][] = 'La Longitud no puede ir vacio';
-        }
-         if(!$this->LATITUD) {
-            self::$alertas['error'][] = 'La Latitud es Obligatorio';
-        }
          if(!$this->EMAIL) {
             self::$alertas['error'][] = 'El Email es Obligatorio';
         }
@@ -101,15 +89,6 @@ use PDO;
         }
         if($this->PASSWORD !== $this->PASSWORD_PAGINA) {
             self::$alertas['error'][] = 'Los password son diferentes';
-        }
-        if(!$this->NIT) {
-            self::$alertas['error'][] = 'El NIT es Obligatorio';
-        }
-           if(!$this->DIRECCION_ENTREGA) {
-            self::$alertas['error'][] = 'La Dirección de Entrega es Obligatorio';
-        }
-           if(!$this->FOTOGRAFIA_CLIENTE) {
-            self::$alertas['error'][] = 'La Fotografía del Cliente es Obligatorio';
         }
         
         return self::$alertas;

@@ -46,16 +46,7 @@
         >
     </div>
 
-     <div class="formulario__campo">
-        <label for="UBICACION" class="formulario__label">Ubicación</label>
-        <input type="text"
-          class="formulario__input"
-          placeholder="Tu Ubicación"
-          id="UBICACION"
-          name="UBICACION"
-          value="<?php echo $usuario->UBICACION ?? '';?>"
-        >
-    </div>
+    
 
      <div class="formulario__campo">
         <label for="EMAIL" class="formulario__label">Email</label>
@@ -100,39 +91,7 @@
           name="PASSWORD"
         >
     </div>
-
-      <div class="formulario__campo">
-        <label for="NIT" class="formulario__label">NIT</label>
-        <input type="text"
-          class="formulario__input"
-          placeholder="Tu Nit"
-          id="NIT"
-          name="NIT"
-          value="<?php echo $usuario->NIT ?? '';?>"
-        >
-    </div>
-
-      <div class="formulario__campo">
-        <label for="DIRECCION_ENTREGA" class="formulario__label">Direccion de Entrega</label>
-        <input type="text"
-          class="formulario__input"
-          placeholder="Tu direccion de entrega"
-          id="DIRECCION_ENTREGA"
-          name="DIRECCION_ENTREGA"
-          value="<?php echo $usuario->DIRECCION_ENTREGA ?? '';?>"
-        >
-    </div>
-
-      <div class="formulario__campo">
-        <label for="FOTOGRAFIA_CLIENTE" class="formulario__label">Fotografía</label>
-        <input type="file"
-          class="formulario__input"
-          placeholder="Tu Fotografía"
-          id="FOTOGRAFIA_CLIENTE"
-          name="FOTOGRAFIA_CLIENTE"
-        >
-    </div>
-
+    
           <input type="submit" class="btn btn-primary formulario__submit" value="Crear Cuenta">
 
      </form>
