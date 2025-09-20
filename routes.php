@@ -86,11 +86,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($path === '/mensaje')) {
   exit;
 }
 
+
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($path === '/confirmar-cuenta')) {
   require_once __DIR__ . '/controllers/AuthController.php';
   (new AuthController())->confirmar();
   exit;
 }
+
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($path === '/olvide')) {
+  require_once __DIR__ . '/controllers/AuthController.php';
+  (new AuthController())->olvide();
+  exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($path === '/olvide')) {
+  require_once __DIR__ . '/controllers/AuthController.php';
+  (new AuthController())->olvide();
+  exit;
+}
+
+
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($path === '/reestablecer')) {
+  require_once __DIR__ . '/controllers/AuthController.php';
+  (new AuthController())->reestablecer();
+  exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($path === '/reestablecer')) {
+  require_once __DIR__ . '/controllers/AuthController.php';
+  (new AuthController())->reestablecer();
+  exit;
+}
+
+
 
 // POST /carrito
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $path === '/carrito/agregar') {
