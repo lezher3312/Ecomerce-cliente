@@ -5,7 +5,7 @@
 <section class="hero">
   <div class="hero-wrap">
     <div>
-      <h1>Encuentra y sigue tus productos importados</h1>
+      <h1>busca  y sigue tus productos importados</h1>
       <p>Busca por categoría, nombre o código; explora tendencias y revisa el estado de tus pedidos en tiempo real.</p>
 
       <div class="search" role="search">
@@ -62,7 +62,8 @@
       <?php foreach(array_slice($masVendidos, 0, 3) as $p): ?>
         <article class="card card-prod">
           <a href="<?= $basePath ?>/detalle?id=<?= $p['id_producto'] ?>">
-            <img src="/uploads/<?= htmlspecialchars($p['imagen_principal']) ?>" alt="<?= htmlspecialchars($p['nombre']) ?>">
+           <img src="https://gtis.tech/<?= htmlspecialchars($p['imagen_principal']) ?>" 
+             alt="<?= htmlspecialchars($p['nombre']) ?>">
             <div class="body">
               <span class="badge"><?= htmlspecialchars($p['categoria'] ?? '') ?></span>
               <h3><?= htmlspecialchars($p['nombre']) ?></h3>

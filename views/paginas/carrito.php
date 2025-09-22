@@ -12,7 +12,7 @@ $cssExtra = $cssExtra ?? ($basePath ? "$basePath/public/css/carrito.css" : "/pub
 <link rel="stylesheet" href="<?= htmlspecialchars($cssExtra) ?>">
 
 <main class="carrito-wrap container">
-  <h1 class="carrito-title">🛒 Mi carrito</h1>
+  <h1 class="carrito-title">🛒 tu carrito</h1>
 
   <?php if (isset($_SESSION['flash_cart'])): ?>
     <div class="alert alert-info" role="alert">

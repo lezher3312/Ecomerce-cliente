@@ -10,13 +10,13 @@
     <!-- ================== FOTOS ================== -->
     <div class="detalle-fotos">
       <img class="foto-principal" 
-           src="/uploads/<?= htmlspecialchars($producto['imagen_principal']) ?>" 
+           src="https://gtis.tech/<?= htmlspecialchars($producto['imagen_principal']) ?>" 
            alt="<?= htmlspecialchars($producto['nombre']) ?>">
 
       <?php if (!empty($producto['imagenes_extra'])): ?>
         <div class="miniaturas">
           <?php foreach ($producto['imagenes_extra'] as $img): ?>
-            <img src="/uploads/<?= htmlspecialchars($img) ?>" 
+            <img src="https://gtis.tech/<?= htmlspecialchars($img) ?>" 
                  alt="Foto extra de <?= htmlspecialchars($producto['nombre']) ?>">
           <?php endforeach; ?>
         </div>
@@ -52,7 +52,7 @@
 
       <form method="post" action="/carrito/agregar">
         <input type="hidden" name="id_producto" value="<?= $producto['id_producto'] ?>">
-       <button class="btn btn-primary" <?= $producto['existencia'] <= 0 ? 'disabled' : '' ?>>
+        <button class="btn btn-primary" <?= $producto['existencia'] <= 0 ? 'disabled' : '' ?>>
             Agregar al carrito
         </button>
       </form>

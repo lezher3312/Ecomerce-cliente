@@ -51,7 +51,8 @@
       <?php foreach($productos ?? [] as $p): ?>
         <article class="card card-prod">
           <a href="detalle?id=<?= $p['id_producto'] ?>">
-            <img src="<?= htmlspecialchars($p['imagen_principal']) ?>" alt="<?= htmlspecialchars($p['nombre']) ?>">
+             <img src="https://gtis.tech/<?= htmlspecialchars($p['imagen_principal']) ?>" 
+             alt="<?= htmlspecialchars($p['nombre']) ?>">
             <div class="body">
               <h3><?= htmlspecialchars($p['nombre']) ?></h3>
               <p class="price">US$ <?= number_format($p['precio'], 2) ?></p>

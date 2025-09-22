@@ -1,12 +1,14 @@
 RewriteEngine On
-
-# Indica la subcarpeta real del proyecto
 RewriteBase /Global-client/
 
-# Ignora archivos y carpetas reales
+# Fuerza la barra después de Global-client
+RewriteCond %{REQUEST_URI} ^/Global-client[^/]
+RewriteRule ^Global-client(.*)$ /Global-client/$1 [L,R=301]
+
+# Ignora archivos/carpetas existentes
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
-# Enruta todo a index.php
+# Redirige todo a index.php
 RewriteRule ^ index.php [QSA,L]
