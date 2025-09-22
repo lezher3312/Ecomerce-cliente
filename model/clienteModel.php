@@ -106,6 +106,17 @@ use PDO;
         $this->FECHA_CREACION = date('Y-m-d');
     }
 
+     // Valida un email
+    public function validarEmail() {
+        if(!$this->EMAIL) {
+            self::$alertas['error'][] = 'El Email es Obligatorio';
+        }
+        if(!filter_var($this->EMAIL, FILTER_VALIDATE_EMAIL)) {
+            self::$alertas['error'][] = 'Email no válido';
+        }
+        return self::$alertas;
+    }
+
      }
 
 ?>

@@ -107,4 +107,35 @@ class AuthController {
         require __DIR__ . '/../views/auth/confirmar.php';
     }
 
+     public function olvide(){
+        $alertas = [];
+
+        if($_SERVER['REQUEST_METHOD'] === 'POST'){
+           $usuario = new ClienteModel($_POST);
+           $alertas = $usuario->validarEmail();
+           if(empty($alertas)){
+             // Buscar el usuario
+              $usuario = ClienteModel::where('EMAIL', $usuario->EMAIL);
+             
+              if($usuario && $usuario->CONFIRMADO){
+                //Generar un nuevo token
+                $usuario->crearToken();
+                //Actualizar el usuario
+                unset($usuario->PASSWORD);
+                $usuario->guardar();
+                //Enviar el email
+                $email = new Email( $usuario->EMAIL, $usuario->NOMBRE_COMPLETO, $usuario->TOKEN);
+                $email->enviarInstrucciones();
+
+                //Imprimir alerta
+                $alertas['exito'][] = 'Hemos enviado las instrucciones a tu email';
+              }else{
+                $alertas['error'][] = 'El Usuario no existe o no esta confirmado'; 
+              }
+           }
+        }
+        $alertas = $alertas;
+
+        require __DIR__ . '/../views/auth/olvide.php';
+    }
 }

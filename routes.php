@@ -61,51 +61,81 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/detalle') {
 }
 
 // ---------------- AUTENTICACIÓN ----------------
-if ($path === '/login') {
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/login') {
     require_once __DIR__ . '/controllers/AuthController.php';
     (new AuthController())->index();
     exit;
 }
-if ($path === '/registro') {
+
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/registro') {
     require_once __DIR__ . '/controllers/AuthController.php';
     (new AuthController())->registro();
     exit;
 }
-if ($path === '/mensaje') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $path === '/registro') {
+    require_once __DIR__ . '/controllers/AuthController.php';
+    (new AuthController())->registro();
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/mensaje') {
     require_once __DIR__ . '/controllers/AuthController.php';
     (new AuthController())->mensaje();
     exit;
 }
-if ($path === '/confirmar-cuenta') {
+
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/confirmar-cuenta') {
     require_once __DIR__ . '/controllers/AuthController.php';
     (new AuthController())->confirmar();
     exit;
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/olvide') {
+    require_once __DIR__ . '/controllers/AuthController.php';
+    (new AuthController())->olvide();
+    exit;
+}
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $path === '/olvide') {
+    require_once __DIR__ . '/controllers/AuthController.php';
+    (new AuthController())->olvide();
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/reestablecer') {
+    require_once __DIR__ . '/controllers/AuthController.php';
+    (new AuthController())->reestablecer();
+    exit;
+}
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $path === '/reestablecer') {
+    require_once __DIR__ . '/controllers/AuthController.php';
+    (new AuthController())->reestablecer();
+    exit;
+}
+
 // ---------------- CARRITO ----------------
-if ($path === '/carrito') {
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/carrito') {
     require_once __DIR__ . '/controllers/CarritoController.php';
     (new CarritoController())->index();
     exit;
 }
-if ($path === '/carrito/agregar' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $path === '/carrito/agregar') {
     require_once __DIR__ . '/controllers/CarritoController.php';
     (new CarritoController())->agregar();
     exit;
 }
-if ($path === '/carrito/actualizar' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $path === '/carrito/actualizar') {
     require_once __DIR__ . '/controllers/CarritoActualizarController.php';
     (new CarritoActualizarController())->actualizar();
     exit;
 }
-if ($path === '/carrito/eliminar' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $path === '/carrito/eliminar') {
     require_once __DIR__ . '/controllers/CarritoActualizarController.php';
     (new CarritoActualizarController())->eliminar();
     exit;
 }
 
 // ---------------- PEDIDOS / ENVÍOS ----------------
-if ($path === '/registro/pedido') {
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/registro/pedido') {
     require_once __DIR__ . '/controllers/registroPedidoController.php';
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         (new RegistroPedidoController())->registrar();
@@ -124,6 +154,3 @@ if ($path === '/envio') {
     exit;
 }
 
-// ---------------- 404 POR DEFECTO ----------------
-http_response_code(404);
-echo "404 — Ruta no encontrada: {$path}";
