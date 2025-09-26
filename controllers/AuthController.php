@@ -4,13 +4,12 @@ use model\ClienteModel;
 require_once __DIR__ . '/../model/ClienteModel.php';
 require_once __DIR__ . '/../config/funciones.php';
 use Classes\Email;
-use Model\Usuario;
 
 require_once __DIR__ . '/../classes/Email.php';
 
 
 class AuthController {
-
+ 
     public function index(){
         $alertas = [];
 
@@ -138,4 +137,42 @@ class AuthController {
 
         require __DIR__ . '/../views/auth/olvide.php';
     }
+public function reestablecer(){
+    $alertas = [];
+    
+    $token = s($_GET['token']);
+    $token_valido = true;
+
+    if(!$token) header('Location: /');
+
+    // Buscar usuario por token
+    $usuario = ClienteModel::where('TOKEN', $token);
+
+    // Si no existe el usuario -> token inválido
+    if(!$usuario){
+        ClienteModel::setAlerta('error', 'Token No válido, intenta de nuevo');
+        $token_valido = false;
+    }
+
+    // Si existe usuario y llega un POST -> actualizar contraseña
+    if($usuario && $_SERVER['REQUEST_METHOD'] === 'POST'){
+        $usuario->sincronizar($_POST);
+        $alertas = $usuario->validarPassword();
+        if(empty($alertas)){
+            $usuario->hashPassword();
+            $usuario->TOKEN = null;
+
+            $resultado = $usuario->guardar();
+            if($resultado){
+                header('Location:/login');
+            }
+        }
+    }
+
+    $alertas = $alertas;
+    $alertas = ClienteModel::getAlertas();
+    $token_valido = $token_valido;
+    require __DIR__ . '/../views/auth/reestablecer.php';
+}
+
 }

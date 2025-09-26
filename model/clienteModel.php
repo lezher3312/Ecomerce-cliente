@@ -117,6 +117,16 @@ use PDO;
         return self::$alertas;
     }
 
+      public function validarPassword() {
+        if(!$this->PASSWORD_PAGINA) {
+            self::$alertas['error'][] = 'El Password no puede ir vacio';
+        }
+        if(strlen($this->PASSWORD_PAGINA) < 6) {
+            self::$alertas['error'][] = 'El password debe contener al menos 6 caracteres';
+        }
+        return self::$alertas;
+    }
+
      }
 
 ?>

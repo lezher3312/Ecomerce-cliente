@@ -6,7 +6,7 @@
 
 <main class="registro">
  <h2 class="registro__heading"> Reestablece tu contraseña</h2> 
- <p class="registro__texto">Coloca tu nuevo password</p>
+ <p class="registro__texto">Coloca tu nuevo password.</p>
      
  <?php require_once __DIR__ . '/../layouts/alertas.php'?>
  

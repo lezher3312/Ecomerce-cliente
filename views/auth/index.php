@@ -5,12 +5,12 @@
 
 <?php require __DIR__ . '/../layouts/header.php'; ?>
 <main class="auth">
-  <h2 class="auth__heading"> Iniciar Sesión</h2>
+  <h2 class="auth__heading">Iniciar Sesión</h2>
   <p class="auth__texto">Completa los campos para iniciar sesión:</p>
 
        <?php require_once __DIR__ . '/../layouts/alertas.php'?>
 
-<form method="POST" action="<?= $basePath ?>login" class="formulario">
+<form method="POST" action="/login" class="formulario">
 
 
     <div class="formulario__campo">
