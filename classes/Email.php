@@ -45,7 +45,7 @@ class Email {
             $contenido  = '<html>';
             $contenido .= "<p><strong>Hola {$this->nombre}</strong>, has registrado correctamente tu cuenta en Global-Import; pero es necesario confirmarla.</p>";
            //Modificar el puerto en donde corren el proyecto :)
-            $contenido .= "<p>Presiona aquí: <a href='" . ($_ENV['HOST'] ?? "http://localhost:3000") . "/confirmar-cuenta?token={$this->token}'>Confirmar Cuenta</a></p>";
+            $contenido .= "<p>Presiona aquí: <a href='" . ($_ENV['HOST'] ?? "https://gtis.tech/Global-client") . "/confirmar-cuenta?token={$this->token}'>Confirmar Cuenta</a></p>";
             $contenido .= "<p>Si tú no creaste esta cuenta, puedes ignorar este mensaje.</p>";
             $contenido .= '</html>';
 
@@ -68,7 +68,7 @@ class Email {
 
             $contenido  = '<html>';
             $contenido .= "<p><strong>Hola {$this->nombre}</strong>, has solicitado reestablecer tu password. Sigue el siguiente enlace para hacerlo:</p>";
-            $contenido .= "<p><a href='" . ($_ENV['HOST'] ?? "http://localhost:3000") . "/reestablecer?token={$this->token}'>Reestablecer Password</a></p>";
+            $contenido .= "<p><a href='" . ($_ENV['HOST'] ?? "https://gtis.tech/Global-client") . "/reestablecer?token={$this->token}'>Reestablecer Password</a></p>";
             $contenido .= "<p>Si tú no solicitaste este cambio, puedes ignorar este mensaje.</p>";
             $contenido .= '</html>';
 

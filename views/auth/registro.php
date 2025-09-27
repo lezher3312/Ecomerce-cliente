@@ -11,7 +11,7 @@
     
      <?php require_once __DIR__ . '/../layouts/alertas.php'?>
      
-<form method="POST" action="/registro" class="formulario" enctype="multipart/form-data">
+<form method="POST" action="<?= url('registro') ?>" class="formulario" enctype="multipart/form-data">
          
     <div class="formulario__campo">
         <label for="NOMBRE_COMPLETO" class="formulario__label">Nombre Completo</label>
@@ -97,8 +97,8 @@
      </form>
    
      <div class="acciones">
-        <a href="/login" class="acciones__enlace">¿Ya tienes cuenta? Iniciar Sesión</a>
-        <a href="/olvide" class="acciones__enlace">¿Olvidaste tu Password?</a>
+        <a href="<?= url('login') ?>" class="acciones__enlace">¿Ya tienes cuenta? Iniciar Sesión</a>
+        <a href="<?= url('olvide') ?>" class="acciones__enlace">¿Olvidaste tu Password?</a>
     </div>
 
     </main>

@@ -66,7 +66,7 @@ class AuthController {
                 $email->enviarConfirmacion();
 
                 if($resultado){
-                    header('Location:/mensaje');
+                    header('Location: https://gtis.tech/Global-client/mensaje');
                     exit;
                 }
             }
@@ -88,7 +88,7 @@ class AuthController {
 
         $token = s($_GET['token']);
 
-        if(!$token) header('Location: /');
+        if(!$token) header('Location: https://gtis.tech/Global-client/');
 
         $usuario = ClienteModel::where('TOKEN', $token);
         if(empty($usuario)){
@@ -143,7 +143,8 @@ public function reestablecer(){
     $token = s($_GET['token']);
     $token_valido = true;
 
-    if(!$token) header('Location: /');
+    if(!$token) header('Location: https://gtis.tech/Global-client/');
+
 
     // Buscar usuario por token
     $usuario = ClienteModel::where('TOKEN', $token);
@@ -164,7 +165,7 @@ public function reestablecer(){
 
             $resultado = $usuario->guardar();
             if($resultado){
-                header('Location:/login');
+                    header('Location: https://gtis.tech/Global-client/login');
             }
         }
     }

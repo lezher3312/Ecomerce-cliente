@@ -117,7 +117,8 @@ use PDO;
         return self::$alertas;
     }
 
-      public function validarPassword() {
+    // Valida el Password 
+    public function validarPassword() {
         if(!$this->PASSWORD_PAGINA) {
             self::$alertas['error'][] = 'El Password no puede ir vacio';
         }
@@ -126,6 +127,7 @@ use PDO;
         }
         return self::$alertas;
     }
+
 
      }
 

@@ -10,7 +10,7 @@
 
        <?php require_once __DIR__ . '/../layouts/alertas.php'?>
 
-<form method="POST" action="/login" class="formulario">
+<form method="POST" action="<?= url('login') ?>" class="formulario">
 
 
     <div class="formulario__campo">
@@ -37,8 +37,8 @@
     </form>
 
     <div class="acciones">
-        <a href="/registro" class="acciones__enlace">¿Aún no tienes una cuenta? Obtener una</a>
-        <a href="/olvide" class="acciones__enlace">¿Olvidaste tu Password?</a>
+        <a href="<?= url('registro') ?>" class="acciones__enlace">¿Aún no tienes una cuenta? Obtener una</a>
+        <a href="<?= url('olvide') ?>" class="acciones__enlace">¿Olvidaste tu Password?</a>
     </div>
 
 </main>

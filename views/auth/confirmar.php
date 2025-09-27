@@ -12,7 +12,7 @@
 
 <?php if(isset($alertas['exito'])){  ?>
 <div class="acciones">
-        <a href="/login" class="acciones__enlace">Iniciar Sesión</a>
+        <a href="<?= url('login') ?>" class="acciones__enlace">Iniciar Sesión</a>
     </div>
     <?php
      }
