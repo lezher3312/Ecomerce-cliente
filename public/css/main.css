@@ -216,3 +216,103 @@ footer{background:#0f1430;color:#d7def5;margin-top:20px}
   font-weight:700;
   box-shadow:0 1px 3px rgba(0,0,0,.15);
 }
+/* ================================
+   HERO BLOQUE DINÁMICO (user-box)
+   ================================ */
+
+.user-box {
+  padding: 1rem;
+  background: #f8faff;
+  border-radius: 10px;
+  font-family: var(--fuente, 'Segoe UI', sans-serif);
+  color: var(--negro-azul-oscuro, #132F4C);
+}
+
+/* Título */
+.user-box h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.8rem;
+  color: var(--azul-claro, #002F6C);
+  font-weight: 600;
+}
+
+/* Mini cards de ofertas */
+.mini-ofertas {
+  display: flex;
+  gap: 0.8rem;
+  margin-bottom: 0.8rem;
+}
+
+.mini-card {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border: 1px solid #e0e6ef;
+  border-radius: 8px;
+  background: #fff;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mini-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.mini-card img {
+  width: 45px;
+  height: 45px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.mini-card .nombre {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--azul-oscuro, #0A3D5F);
+}
+
+.mini-card .precio {
+  color: var(--rojo-suave, #F25C54);
+  font-size: 0.85rem;
+}
+
+/* Texto secundario */
+.user-box p {
+  font-size: 0.9rem;
+  margin: 0.3rem 0;
+  color: #444;
+}
+
+/* Botones dentro del bloque */
+.user-box .btn {
+  display: inline-block;
+  padding: 0.45rem 0.9rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.user-box .btn-primary {
+  background: var(--primary-color, #012b7e);
+  color: #fff;
+}
+
+.user-box .btn-light {
+  background: #f0f2f7;
+  color: var(--azul-claro, #002F6C);
+  margin-right: 0.4rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .mini-ofertas {
+    flex-direction: column;
+  }
+  .mini-card {
+    width: 100%;
+  }
+}

@@ -107,9 +107,42 @@ public function obtenerMasVendidos() {
     return $this->db->query($sql)->fetchAll();
 }
 
-public function obtenerOfertas() {
-    // Simulación: devolver vacío hasta que admin registre ofertas
-    return [];
+public function obtenerOfertas($limit = 50) {
+    $sql = "SELECT p.ID_PRODUCTO AS id_producto,
+                   p.NOMBRE_PRODUCTO AS nombre,
+                   p.DESCRIPCION AS descripcion,
+                   p.PRECIO AS precio,
+                   p.FOTOGRAFIA_PRODUCTO AS imagen_principal,
+                   c.NOMBRE AS categoria,
+                   p.OFERTA,
+                   p.PORCENTAJE_OFERTA,
+                   p.INICIO_OFERTA,
+                   p.FIN_OFERTA
+              FROM producto p
+         LEFT JOIN cat_producto c ON c.ID_CATPRODUCTO = p.ID_CATPRODUCTO
+             WHERE p.ESTADO = 1
+               AND p.OFERTA IN (1,2) -- 1=activa, 2=futura
+          ORDER BY p.INICIO_OFERTA DESC
+             LIMIT ?";
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute([$limit]);
+    $productos = $stmt->fetchAll();
+
+    foreach ($productos as &$p) {
+        $ahora = date('Y-m-d');
+        if ($p['OFERTA'] == 1 &&
+            $p['INICIO_OFERTA'] <= $ahora &&
+            $p['FIN_OFERTA'] >= $ahora) {
+            // calcular precio con descuento
+            $descuento = ($p['PORCENTAJE_OFERTA'] / 100) * $p['precio'];
+            $p['precio_oferta'] = $p['precio'] - $descuento;
+        } else {
+            $p['precio_oferta'] = null; // futura o no válida aún
+        }
+    }
+    return $productos;
 }
+
+
 
 }

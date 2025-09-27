@@ -29,19 +29,51 @@
       </div>
     </div>
 
-    <!-- Ilustración demo -->
-    <div class="illus" aria-hidden="true">
+    <!-- Bloque dinámico en el cuadro blanco -->
+    <div class="illus" aria-hidden="false">
       <div class="mock">
         <div class="bar">
           <span class="dot"></span>
           <span class="dot" style="background:#ffd166"></span>
           <span class="dot" style="background:#06d6a0"></span>
         </div>
-        <div class="content">
-          <div class="skeleton" style="height:90px;border-radius:10px"></div>
-          <div class="skeleton" style="height:90px;border-radius:10px"></div>
-          <div class="skeleton" style="height:90px;border-radius:10px"></div>
-          <div class="skeleton" style="height:90px;border-radius:10px"></div>
+        <div class="content user-box">
+          <?php if (!isset($_SESSION['id_usuario'])): ?>
+            <!-- ================= VISITANTE ================= -->
+            <h3>Descubre ofertas exclusivas 🎉</h3>
+
+            <?php if (!empty($ofertas)): ?>
+              <div class="mini-ofertas">
+                <?php foreach(array_slice($ofertas, 0, 2) as $p): ?>
+                  <div class="mini-card">
+                    <img src="https://gtis.tech/<?= htmlspecialchars($p['imagen_principal']) ?>" 
+                         alt="<?= htmlspecialchars($p['nombre']) ?>">
+                    <div>
+                      <span class="nombre"><?= htmlspecialchars($p['nombre']) ?></span><br>
+                      <strong class="precio">US$ <?= number_format($p['precio'], 2) ?></strong>
+                    </div>
+                  </div>
+                <?php endforeach; ?>
+              </div>
+            <?php else: ?>
+              <p>Regístrate para acceder a descuentos exclusivos en productos seleccionados.</p>
+            <?php endif; ?>
+
+            <p style="margin-top:10px">
+              <a href="registro" class="btn btn-primary">Crea tu cuenta</a> y aprovecha más beneficios.
+            </p>
+
+          <?php else: ?>
+            <!-- ================= USUARIO LOGUEADO ================= -->
+            <h3>Hola, <?= htmlspecialchars($_SESSION['nombre']) ?> 👋</h3>
+            <p>Pedidos activos: <?= $pedidosActivos ?? 0 ?></p>
+            <p>Carrito: <?= $itemsCarrito ?? 0 ?> productos</p>
+
+            <div class="acciones">
+              <a href="pedido_historial" class="btn btn-light">📦 Ver mis pedidos</a>
+              <a href="carrito" class="btn btn-primary">🛒 Ir al carrito</a>
+            </div>
+          <?php endif; ?>
         </div>
       </div>
     </div>
@@ -55,15 +87,15 @@
       <h2>Más vendidos</h2>
       <p class="lead">Explora lo que otros compradores están pidiendo esta semana.</p>
     </div>
-    <a class="pill" href="<?= $basePath ?>/mas-vendidos">Ver todo →</a>
+    <a class="pill" href="mas-vendidos">Ver todo →</a>
   </div>
   <div class="carousel">
     <?php if (!empty($masVendidos)): ?>
       <?php foreach(array_slice($masVendidos, 0, 3) as $p): ?>
         <article class="card card-prod">
-          <a href="<?= $basePath ?>/detalle?id=<?= $p['id_producto'] ?>">
-           <img src="https://gtis.tech/<?= htmlspecialchars($p['imagen_principal']) ?>" 
-             alt="<?= htmlspecialchars($p['nombre']) ?>">
+          <a href="detalle?id=<?= $p['id_producto'] ?>">
+            <img src="https://gtis.tech/<?= htmlspecialchars($p['imagen_principal']) ?>" 
+                 alt="<?= htmlspecialchars($p['nombre']) ?>">
             <div class="body">
               <span class="badge"><?= htmlspecialchars($p['categoria'] ?? '') ?></span>
               <h3><?= htmlspecialchars($p['nombre']) ?></h3>
@@ -86,14 +118,15 @@
       <h2>Novedades</h2>
       <p class="lead">Agregados recientemente al catálogo.</p>
     </div>
-    <a class="pill" href="<?= $basePath ?>/novedades">Ver catálogo →</a>
+    <a class="pill" href="novedades">Ver catálogo →</a>
   </div>
   <div class="carousel">
     <?php if (!empty($novedades)): ?>
       <?php foreach(array_slice($novedades, 0, 3) as $p): ?>
         <article class="card card-prod">
-          <a href="<?= $basePath ?>/detalle?id=<?= $p['id_producto'] ?>">
-            <img src="/uploads/<?= htmlspecialchars($p['imagen_principal']) ?>" alt="<?= htmlspecialchars($p['nombre']) ?>">
+          <a href="detalle?id=<?= $p['id_producto'] ?>">
+            <img src="https://gtis.tech/<?= htmlspecialchars($p['imagen_principal']) ?>" 
+                 alt="<?= htmlspecialchars($p['nombre']) ?>">
             <div class="body">
               <span class="badge"><?= htmlspecialchars($p['categoria'] ?? '') ?></span>
               <h3><?= htmlspecialchars($p['nombre']) ?></h3>
@@ -116,14 +149,15 @@
       <h2>Ofertas</h2>
       <p class="lead">Descuentos por tiempo limitado.</p>
     </div>
-    <a class="pill" href="<?= $basePath ?>/ofertas">Ver más →</a>
+    <a class="pill" href="ofertas">Ver más →</a>
   </div>
   <div class="carousel">
     <?php if (!empty($ofertas)): ?>
       <?php foreach(array_slice($ofertas, 0, 3) as $p): ?>
         <article class="card card-prod">
-          <a href="<?= $basePath ?>/detalle?id=<?= $p['id_producto'] ?>">
-            <img src="/uploads/<?= htmlspecialchars($p['imagen_principal']) ?>" alt="<?= htmlspecialchars($p['nombre']) ?>">
+          <a href="detalle?id=<?= $p['id_producto'] ?>">
+            <img src="https://gtis.tech/<?= htmlspecialchars($p['imagen_principal']) ?>" 
+                 alt="<?= htmlspecialchars($p['nombre']) ?>">
             <div class="body">
               <span class="badge"><?= htmlspecialchars($p['categoria'] ?? '') ?></span>
               <h3><?= htmlspecialchars($p['nombre']) ?></h3>
