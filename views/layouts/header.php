@@ -71,8 +71,19 @@ try {
     </div>
 
     <div class="nav-cta">
+    <?php if(isauth()){?>
+    <button class="btn btn-outline"><?php echo $_SESSION['USUARIO'] ?? '';?></button>
+     <?php }else{?>
       <a href="<?= url('login') ?>" class="btn btn-outline">Iniciar sesión</a>
+    <?php }?>
+     <?php if(isauth()){?>
+            <form method="POST" action="<?= url('logout') ?>">
+      <input type="submit" value="Cerrar Sesión" class="btn btn-primary">
+     </form>
+      <?php }else{?>
       <a href="<?= url('registro') ?>" class="btn btn-primary">Crear cuenta</a>
+    <?php }?>
+
       <button class="hamb" aria-label="Menú">☰</button>
     </div>
   </nav>

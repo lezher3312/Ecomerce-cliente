@@ -73,6 +73,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $path === '/login') {
     exit;
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $path === '/logout') {
+    require_once __DIR__ . '/controllers/AuthController.php';
+    (new AuthController())->logout();
+    exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/registro') {
     require_once __DIR__ . '/controllers/AuthController.php';
     (new AuthController())->registro();

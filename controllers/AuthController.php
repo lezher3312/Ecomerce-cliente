@@ -27,7 +27,8 @@ class AuthController {
                    $_SESSION['nombre'] = $usuario->NOMBRE_COMPLETO;
                    $_SESSION['usuario'] = $usuario->USUARIO_PAGINA;
 
-                   header('Location: /autenticado');
+                  header('Location: https://gtis.tech/Global-client/');
+                  
                 }else{
                     ClienteModel::setAlerta('error', 'Password Incorrecto');   
                 }
@@ -38,6 +39,14 @@ class AuthController {
 
         $alertas = ClienteModel::getAlertas();
         require __DIR__ . '/../views/auth/index.php';
+    }
+
+    public function logout(){
+         if($_SERVER['REQUEST_METHOD'] === 'POST') {
+            session_start();
+            $_SESSION = [];
+            header('Location: https://gtis.tech/Global-client/');
+        }
     }
 
     public function registro() {
