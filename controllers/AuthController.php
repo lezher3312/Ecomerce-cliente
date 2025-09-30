@@ -23,9 +23,9 @@ class AuthController {
                }else{
                 if(password_verify($_POST['PASSWORD_PAGINA'], $usuario->PASSWORD_PAGINA) ) {
                    session_start();
-                   $_SESSION['id'] = $usuario->ID;
-                   $_SESSION['nombre'] = $usuario->NOMBRE_COMPLETO;
-                   $_SESSION['usuario'] = $usuario->USUARIO_PAGINA;
+                   $_SESSION['ID'] = $usuario->ID;
+                   $_SESSION['NOMBRE'] = $usuario->NOMBRE_COMPLETO;
+                   $_SESSION['USUARIO'] = $usuario->USUARIO_PAGINA;
 
                   header('Location: https://gtis.tech/Global-client/');
                   

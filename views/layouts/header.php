@@ -1,4 +1,6 @@
 <?php
+    require_once __DIR__ . '/../../config/funciones.php';
+
 if (session_status() === PHP_SESSION_NONE) session_start();
 
 /* Path actual (para marcar links activos) */
