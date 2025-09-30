@@ -9,7 +9,7 @@ unset($_SESSION['form_registro_old']);
 require __DIR__ . '/../layouts/head.php';
 require __DIR__ . '/../layouts/header.php';
 ?>
-<link rel="stylesheet" href="<?= asset('pblic/css/registroPedido.css') ?>">
+<link rel="stylesheet" href="<?= asset('public/css/registroPedido.css') ?>">
 
 <main class="container" style="max-width:960px; margin:24px auto;">
   <h1>Crear cuenta para continuar</h1>
@@ -22,7 +22,6 @@ require __DIR__ . '/../layouts/header.php';
 
   <form action="<?= htmlspecialchars($basePath) ?>/registro/pedido"
         method="post"
-        enctype="multipart/form-data"
         class="card"
         style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px;">
 
@@ -51,26 +50,14 @@ require __DIR__ . '/../layouts/header.php';
       <input type="password" name="password" required minlength="6" style="width:100%;">
     </div>
 
-    <div>
-      <label>NIT / CUI</label>
-      <input type="text" name="nit" value="<?= htmlspecialchars($old['nit'] ?? '') ?>" style="width:100%;">
-    </div>
-
-    <!-- 👇 AHORA pedimos DIRECCIÓN (no 'Dirección de entrega') -->
     <div style="grid-column: span 2;">
       <label>Dirección</label>
       <input type="text" name="direccion" value="<?= htmlspecialchars($old['direccion'] ?? '') ?>" style="width:100%;">
     </div>
 
-    <div style="grid-column: span 2;">
-      <label>Fotografía del cliente (opcional)</label>
-      <input type="file" name="foto" accept="image/*" style="width:100%;">
-      <small style="color:#64748b">Formatos comunes: JPG, PNG, WEBP, GIF, SVG, HEIC, etc.</small>
-    </div>
-
     <div style="grid-column: span 2; display:flex; gap:8px; margin-top:8px;">
       <button class="btn btn-primary" type="submit">Registrar y continuar</button>
-      <a class="btn btn-outline" href="<?= htmlspecialchars($basePath) ?>/login?next=/envio">Ya tengo cuenta</a>
+      <a class="btn btn-outline" href="<?= htmlspecialchars($basePath) ?>/login?next=/cotizacion">Ya tengo cuenta</a>
     </div>
   </form>
 </main>

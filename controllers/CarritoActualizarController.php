@@ -4,108 +4,45 @@ declare(strict_types=1);
 
 class CarritoActualizarController
 {
-    private string $viewsPath;
     private string $basePath;
-    private PDO $pdo;
 
     public function __construct()
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        $root = dirname(__DIR__);
-        $this->viewsPath = $root . '/views';
-
-        $this->basePath = defined('BASE_PATH')
-            ? rtrim(BASE_PATH, '/')
-            : rtrim(dirname($_SERVER['SCRIPT_NAME']) ?: '', '/');
-
-        require_once $root . '/config/conexion.php';
-        require_once $root . '/model/CarritoModel.php';
-
-        $this->pdo = Conexion::getConexion();
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        $this->basePath = defined('BASE_PATH') ? rtrim(BASE_PATH, '/') : rtrim(dirname($_SERVER['SCRIPT_NAME']) ?: '', '/');
     }
 
-    /**
-     * POST /carrito/actualizar  (cambiar cantidad de un producto)
-     */
+    // POST /carrito/actualizar
     public function actualizar(): void
     {
-        $idProducto = filter_input(INPUT_POST, 'id_producto', FILTER_VALIDATE_INT);
-        $cantidad   = filter_input(INPUT_POST, 'cantidad', FILTER_VALIDATE_INT);
-        $cantidad   = ($cantidad && $cantidad > 0) ? (int)$cantidad : 1;
+        $idProducto = (int)($_POST['id_producto'] ?? 0);
+        $cantidad   = max(1, (int)($_POST['cantidad'] ?? 1));
 
-        if (!$idProducto) {
-            $_SESSION['flash_cart'] = 'Producto inválido.';
-            $this->redirect($this->basePath . '/carrito');
-        }
-
-        $model     = new CarritoModel($this->pdo);
-        $idCliente = $this->resolverIdCliente();
-
-        if ($idCliente) {
-            $idCot = $model->getOrCreateCotizacionAbierta($idCliente);
-            $ok    = $model->updateQty($idCot, (int)$idProducto, $cantidad);
-            if ($ok) {
-                $model->recalcularTotal($idCot);
+        if ($idProducto > 0 && !empty($_SESSION['cart'])) {
+            if (isset($_SESSION['cart'][$idProducto])) {
+                if (is_array($_SESSION['cart'][$idProducto])) {
+                    $_SESSION['cart'][$idProducto]['cantidad'] = $cantidad;
+                } else {
+                    $_SESSION['cart'][$idProducto] = $cantidad;
+                }
+                $_SESSION['flash_cart'] = 'Cantidad actualizada.';
             }
-        } else {
-            // Invitado (SESSION)
-            $model->sessionUpdateQty((int)$idProducto, $cantidad);
         }
 
-        $_SESSION['flash_cart'] = 'Cantidad actualizada.';
-        $this->redirect($this->basePath . '/carrito', 303);
+        header('Location: ' . $this->basePath . '/carrito');
+        exit;
     }
 
-    /**
-     * POST /carrito/eliminar  (eliminar producto del carrito)
-     */
+    // POST /carrito/eliminar
     public function eliminar(): void
     {
-        $idProducto = filter_input(INPUT_POST, 'id_producto', FILTER_VALIDATE_INT);
-
-        if (!$idProducto) {
-            $_SESSION['flash_cart'] = 'Producto inválido.';
-            $this->redirect($this->basePath . '/carrito');
+        $idProducto = (int)($_POST['id_producto'] ?? 0);
+        if ($idProducto > 0 && !empty($_SESSION['cart'][$idProducto])) {
+            unset($_SESSION['cart'][$idProducto]);
+            $_SESSION['flash_cart'] = 'Producto eliminado del carrito.';
         }
 
-        $model     = new CarritoModel($this->pdo);
-        $idCliente = $this->resolverIdCliente();
-
-        if ($idCliente) {
-            $idCot = $model->getCotizacionAbierta($idCliente);
-            if ($idCot) {
-                $model->removeItem($idCot, (int)$idProducto);
-                $model->recalcularTotal($idCot);
-            }
-        } else {
-            // Invitado (SESSION)
-            $model->sessionRemoveItem((int)$idProducto);
-        }
-
-        $_SESSION['flash_cart'] = 'Producto eliminado del carrito.';
-        $this->redirect($this->basePath . '/carrito', 303);
-    }
-
-    private function resolverIdCliente(): ?int
-    {
-        if (!empty($_SESSION['cliente']['ID'])) {
-            return (int)$_SESSION['cliente']['ID'];
-        }
-        if (!empty($_SESSION['usuarios']['id'])) {
-            return (int)$_SESSION['usuarios']['id'];
-        }
-        if (!empty($_SESSION['ID'])) {
-            return (int)$_SESSION['ID'];
-        }
-        return null;
-    }
-
-    private function redirect(string $to, int $code = 302): void
-    {
-        header("Location: {$to}", true, $code);
+        header('Location: ' . $this->basePath . '/carrito');
         exit;
     }
 }

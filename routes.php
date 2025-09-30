@@ -166,3 +166,52 @@ if ($path === '/envio') {
     exit;
 }
 
+
+// ¡CORRECCIÓN!: separa GET y POST para /registro/pedido
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/registro/pedido') {
+    require_once __DIR__ . '/controllers/registroPedidoController.php';
+    (new RegistroPedidoController())->index();
+    exit;
+}
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $path === '/registro/pedido') {
+    require_once __DIR__ . '/controllers/registroPedidoController.php';
+    (new RegistroPedidoController())->registrar();
+    exit;
+}
+
+// ---------------- COTIZACIÓN ----------------
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/cotizacion') {
+    require_once __DIR__ . '/controllers/CotizacionController.php';
+    (new CotizacionController())->index();
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $path === '/cotizacion/tipo') {
+    require_once __DIR__ . '/controllers/CotizacionController.php';
+    (new CotizacionController())->actualizarTipo();
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $path === '/cotizacion/pedir') {
+    require_once __DIR__ . '/controllers/CotizacionController.php';
+    (new CotizacionController())->pedir();
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $path === '/cotizacion/procesar') {
+    require_once __DIR__ . '/controllers/CotizacionController.php';
+    (new CotizacionController())->procesar();
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $path === '/cotizacion/confirmar') {
+    require_once __DIR__ . '/controllers/CotizacionController.php';
+    (new CotizacionController())->confirmar();
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $path === '/cotizacion/anular') {
+    require_once __DIR__ . '/controllers/CotizacionController.php';
+    (new CotizacionController())->anular();
+    exit;
+}

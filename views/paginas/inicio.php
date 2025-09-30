@@ -5,9 +5,10 @@
 <section class="hero">
   <div class="hero-wrap">
     <div>
-      <h1>busca  y sigue tus productos importados</h1>
-      <p>Busca por categoría, nombre o código; explora tendencias y revisa el estado de tus pedidos en tiempo real.</p>
+      <h1>Busca y sigue tus productos importados</h1>
+      <p>Explora por categoría, nombre o código; revisa el estado de tus pedidos en tiempo real.</p>
 
+      <!-- 🔎 Buscador -->
       <div class="search" role="search">
         <select aria-label="Categoría">
           <option value="">Todos</option>
@@ -21,6 +22,7 @@
         <button>Buscar</button>
       </div>
 
+      <!-- 🔹 Filtros rápidos -->
       <div class="quick-filters" aria-label="Filtros rápidos">
         <span class="chip">Entrega rápida</span>
         <span class="chip">En oferta</span>
@@ -29,53 +31,30 @@
       </div>
     </div>
 
-    <!-- Bloque dinámico en el cuadro blanco -->
-    <div class="illus" aria-hidden="false">
-      <div class="mock">
-        <div class="bar">
-          <span class="dot"></span>
-          <span class="dot" style="background:#ffd166"></span>
-          <span class="dot" style="background:#06d6a0"></span>
-        </div>
-        <div class="content user-box">
-          <?php if (!isset($_SESSION['id_usuario'])): ?>
-            <!-- ================= VISITANTE ================= -->
-            <h3>Descubre ofertas exclusivas 🎉</h3>
+    <!-- 🔹 Carrusel de categorías dinámicas -->
+    <div class="hero-categories-carousel">
+      <h3>Explora por categoría</h3>
+      <div class="cat-carousel">
+  <?php if (!empty($categorias)): ?>
+    <?php foreach($categorias as $c): 
+      $icono = 'fas fa-tags'; // ícono por defecto
+      switch(strtolower($c['nombre'])){
+        case 'tecnologia': $icono = 'fas fa-laptop'; break;
+        case 'hogar': $icono = 'fas fa-couch'; break;
+        case 'moda': $icono = 'fas fa-tshirt'; break;
+        case 'herramientas': $icono = 'fas fa-tools'; break;
+      }
+    ?>
+      <a href="catalogo?cat=<?= $c['id_categoria'] ?>" class="cat-slide">
+        <i class="<?= $icono ?>"></i>
+        <span><?= htmlspecialchars($c['nombre']) ?></span>
+      </a>
+    <?php endforeach; ?>
+  <?php else: ?>
+    <p>No hay categorías registradas.</p>
+  <?php endif; ?>
+</div>
 
-            <?php if (!empty($ofertas)): ?>
-              <div class="mini-ofertas">
-                <?php foreach(array_slice($ofertas, 0, 2) as $p): ?>
-                  <div class="mini-card">
-                    <img src="https://gtis.tech/<?= htmlspecialchars($p['imagen_principal']) ?>" 
-                         alt="<?= htmlspecialchars($p['nombre']) ?>">
-                    <div>
-                      <span class="nombre"><?= htmlspecialchars($p['nombre']) ?></span><br>
-                      <strong class="precio">US$ <?= number_format($p['precio'], 2) ?></strong>
-                    </div>
-                  </div>
-                <?php endforeach; ?>
-              </div>
-            <?php else: ?>
-              <p>Regístrate para acceder a descuentos exclusivos en productos seleccionados.</p>
-            <?php endif; ?>
-
-            <p style="margin-top:10px">
-              <a href="registro" class="btn btn-primary">Crea tu cuenta</a> y aprovecha más beneficios.
-            </p>
-
-          <?php else: ?>
-            <!-- ================= USUARIO LOGUEADO ================= -->
-            <h3>Hola, <?= htmlspecialchars($_SESSION['nombre']) ?> 👋</h3>
-            <p>Pedidos activos: <?= $pedidosActivos ?? 0 ?></p>
-            <p>Carrito: <?= $itemsCarrito ?? 0 ?> productos</p>
-
-            <div class="acciones">
-              <a href="pedido_historial" class="btn btn-light">📦 Ver mis pedidos</a>
-              <a href="carrito" class="btn btn-primary">🛒 Ir al carrito</a>
-            </div>
-          <?php endif; ?>
-        </div>
-      </div>
     </div>
   </div>
 </section>

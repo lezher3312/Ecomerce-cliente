@@ -60,3 +60,29 @@
     grid-template-columns: 1fr;
   }
 }
+.compartir {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: .8rem;
+}
+
+.compartir span {
+  font-weight: 600;
+  color: #333;
+}
+
+.compartir a, 
+.compartir .btn-copy {
+  font-size: 1.4rem;
+  color: #555;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.compartir a:hover,
+.compartir .btn-copy:hover {
+  color: #012b7e; /* tu color primario */
+}

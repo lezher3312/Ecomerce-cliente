@@ -9,8 +9,11 @@ class CarritoModel
     public function __construct(PDO $pdo)
     {
         $this->pdo = $pdo;
+        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         if (session_status() === PHP_SESSION_NONE) session_start();
     }
+
+    /* ====== COTIZACIÓN CABECERA ====== */
 
     public function getCotizacionAbierta(int $idCliente): ?int
     {
@@ -18,8 +21,8 @@ class CarritoModel
             "SELECT ID_COTIZACION
                FROM cotizacion
               WHERE ID_CLIENTE = :cli
-                AND TIPO_COTIZACION = 'WEB'
-                AND ESTADO IN ('BORRADOR','PENDIENTE')
+                AND TIPO_COTIZACION IN (1,2)
+                AND ESTADO IN (0,1,2,3)
            ORDER BY ID_COTIZACION DESC
               LIMIT 1"
         );
@@ -29,68 +32,137 @@ class CarritoModel
     }
 
     public function getOrCreateCotizacionAbierta(int $idCliente): int
-{
-    $id = $this->getCotizacionAbierta($idCliente);
-    if ($id) return $id;
-
-    // Fechas base
-    $fechaCot  = date('Y-m-d H:i:s');                           // ahora
-    $fechaVenc = date('Y-m-d H:i:s', strtotime('+15 days'));    // vence en 15 días
-    $fechaEnt  = date('Y-m-d H:i:s', strtotime('+3 days'));     // entrega estimada en 3 días (ajústalo a tu negocio)
-
-    $st = $this->pdo->prepare(
-        "INSERT INTO cotizacion
-           (ID_CLIENTE, FECHA_COTIZACION, FECHA_VENCIMIENTO, FECHA_ENTREGA,
-            TOTAL_COTIZACION, TIPO_COTIZACION, ESTADO, ANTICIPO)
-         VALUES
-           (:cli, :fc, :fv, :fe,
-            0.00, 'WEB', 'BORRADOR', 0.00)"
-    );
-    $st->execute([
-        ':cli' => $idCliente,
-        ':fc'  => $fechaCot,
-        ':fv'  => $fechaVenc,
-        ':fe'  => $fechaEnt,
-    ]);
-
-    return (int)$this->pdo->lastInsertId();
-}
-
-
-    // Para pintar fichas (incluye DESCRIPCION)
-    public function getProductCardData(int $idProducto): ?array
     {
-        $st = $this->pdo->prepare(
-            "SELECT ID_PRODUCTO, NOMBRE_PRODUCTO, DESCRIPCION, PRECIO, FOTOGRAFIA_PRODUCTO, EXISTENCIA, ESTADO
-               FROM producto
-              WHERE ID_PRODUCTO = :p
-              LIMIT 1"
-        );
-        $st->execute([':p' => $idProducto]);
-        $row = $st->fetch(PDO::FETCH_ASSOC);
-        if (!$row) return null;
+        $id = $this->getCotizacionAbierta($idCliente);
+        if ($id) return $id;
 
-        return [
-            'id'          => (int)$row['ID_PRODUCTO'],
-            'nombre'      => (string)$row['NOMBRE_PRODUCTO'],
-            'descripcion' => (string)($row['DESCRIPCION'] ?? ''),
-            'precio'      => (float)$row['PRECIO'],
-            'imagen'      => $row['FOTOGRAFIA_PRODUCTO'] ?: null,
-        ];
+        $now     = date('Y-m-d H:i:s');
+        $venc    = date('Y-m-d H:i:s', strtotime('+15 days'));
+        $entrega = date('Y-m-d H:i:s', strtotime('+3 days'));
+
+        $st = $this->pdo->prepare(
+            "INSERT INTO cotizacion
+               (ID_CLIENTE, FECHA_COTIZACION, FECHA_VENCIMIENTO, FECHA_ENTREGA,
+                TOTAL_COTIZACION, TOTAL_CON_IMPUESTOS, TIPO_DE_CAMBIO,
+                TIPO_COTIZACION, ESTADO, ANTICIPO)
+             VALUES
+               (:cli, :fc, :fv, :fe,
+                0.00, 0.00, 1.00,
+                1, 1, 0.00)"
+        );
+        $st->execute([':cli' => $idCliente, ':fc' => $now, ':fv' => $venc, ':fe' => $entrega]);
+        return (int)$this->pdo->lastInsertId();
     }
 
-    // Agregar o sumar en BD
+    public function getCotizacionMeta(int $idCot): array
+    {
+        $st = $this->pdo->prepare("SELECT * FROM cotizacion WHERE ID_COTIZACION = :c LIMIT 1");
+        $st->execute([':c' => $idCot]);
+        return $st->fetch(PDO::FETCH_ASSOC) ?: [];
+    }
+
+    public function setTipoCotizacion(int $idCot, int $tipo): void
+    {
+        $tipo = in_array($tipo, [1,2], true) ? $tipo : 1;
+        $st = $this->pdo->prepare("UPDATE cotizacion SET TIPO_COTIZACION = :t WHERE ID_COTIZACION = :c");
+        $st->execute([':t' => $tipo, ':c' => $idCot]);
+        $this->recalcularLineasPorTipo($idCot, $tipo);
+        $this->recalcularTotal($idCot);
+    }
+
+    public function setEstado(int $idCot, int $estado): void
+    {
+        // 0=inactivo, 1=activo, 2=falta impuesto, 3=procesado, 4=confirmado, 5=anulado
+        if (!in_array($estado, [0,1,2,3,4,5], true)) return;
+        $st = $this->pdo->prepare("UPDATE cotizacion SET ESTADO = :e WHERE ID_COTIZACION = :c");
+        $st->execute([':e' => $estado, ':c' => $idCot]);
+    }
+
+    public function setTotalConImpuestos(int $idCot, float $totalConImpuestos): void
+    {
+        $st = $this->pdo->prepare("UPDATE cotizacion SET TOTAL_CON_IMPUESTOS = :t WHERE ID_COTIZACION = :c");
+        $st->execute([':t' => $totalConImpuestos, ':c' => $idCot]);
+    }
+
+    public function contarItemsCarrito(int $idCliente): int
+    {
+        $st = $this->pdo->prepare(
+            "SELECT COALESCE(SUM(d.CANTIDAD), 0)
+               FROM cotizacion c
+          LEFT JOIN det_cotizacion_producto d ON d.ID_COTIZACION = c.ID_COTIZACION
+              WHERE c.ID_CLIENTE = :cli
+                AND c.ESTADO IN (0,1,2,3)"
+        );
+        $st->execute([':cli' => $idCliente]);
+        return (int)$st->fetchColumn();
+    }
+
+    /* ====== PRODUCTO Y CÁLCULOS ====== */
+
+    private function fetchProducto(int $idProducto): ?array
+    {
+        $st = $this->pdo->prepare(
+            "SELECT ID_PRODUCTO, NOMBRE_PRODUCTO, DESCRIPCION, PRECIO,
+                    OFERTA, PORCENTAJE_OFERTA, INICIO_OFERTA, FIN_OFERTA,
+                    FOTOGRAFIA_PRODUCTO,
+                    HAZMAT_OPTION, HAZMAT_PRECIO,
+                    PESO_OPTION, PESO_CANTIDAD, PESO_PRECIO
+               FROM producto
+              WHERE ID_PRODUCTO = :p LIMIT 1"
+        );
+        $st->execute([':p' => $idProducto]);
+        return $st->fetch(PDO::FETCH_ASSOC) ?: null;
+    }
+
+    private function precioConOferta(array $p): array
+    {
+        $precio = (float)$p['PRECIO'];
+        $activa = false;
+        $ofertaFlag = (int)($p['OFERTA'] ?? 0);
+        $porc       = (float)($p['PORCENTAJE_OFERTA'] ?? 0);
+        $hoy        = date('Y-m-d');
+
+        if ($ofertaFlag === 1 && $porc > 0) {
+            $ini = !empty($p['INICIO_OFERTA']) ? substr($p['INICIO_OFERTA'], 0, 10) : null;
+            $fin = !empty($p['FIN_OFERTA'])    ? substr($p['FIN_OFERTA'], 0, 10)    : null;
+            if ((!$ini || $ini <= $hoy) && (!$fin || $fin >= $hoy)) {
+                $precio = round($precio * (1 - $porc / 100), 2);
+                $activa = true;
+            }
+        }
+        return [$precio, $activa, $porc];
+    }
+
+    private function cargoUnitario(array $p): float
+    {
+        $cargo = 0.0;
+        if ((int)($p['HAZMAT_OPTION'] ?? 0) === 1) {
+            $cargo += (float)($p['HAZMAT_PRECIO'] ?? 0);
+        }
+        if ((int)($p['PESO_OPTION'] ?? 0) === 1) {
+            $cargo += (float)($p['PESO_PRECIO'] ?? 0);
+            // Si quisieras multiplicar por PESO_CANTIDAD:
+            // $cargo += (float)($p['PESO_PRECIO'] ?? 0) * (float)($p['PESO_CANTIDAD'] ?? 1);
+        }
+        return round($cargo, 2);
+    }
+
+    /* ====== DETALLE: CRUD + RECÁLCULOS ====== */
+
     public function addOrUpdateItem(int $idCotizacion, int $idProducto, int $cantidad): bool
     {
-        // precio actual
-        $stP = $this->pdo->prepare(
-            "SELECT PRECIO FROM producto WHERE ID_PRODUCTO = :p LIMIT 1"
-        );
-        $stP->execute([':p' => $idProducto]);
-        $precio = (float)($stP->fetchColumn() ?: 0.0);
-        if ($precio <= 0) return false;
+        $cantidad = max(1, (int)$cantidad);
+        $p = $this->fetchProducto($idProducto);
+        if (!$p) return false;
 
-        // existe línea?
+        [$precioUnit] = $this->precioConOferta($p);
+        $cargoUnit = $this->cargoUnitario($p);
+
+        $tipo = (int)($this->getCotizacionMeta($idCotizacion)['TIPO_COTIZACION'] ?? 1);
+        $lineBase = ($tipo === 1 ? ($precioUnit + $cargoUnit) : $cargoUnit);
+        $subtotal = round($lineBase * $cantidad, 2);
+
+        // ¿ya existe línea?
         $stC = $this->pdo->prepare(
             "SELECT ID_DETCOTIZACION_PRODUCTO, CANTIDAD
                FROM det_cotizacion_producto
@@ -102,75 +174,72 @@ class CarritoModel
 
         if ($line) {
             $newQty = (int)$line['CANTIDAD'] + $cantidad;
-            $newSub = $newQty * $precio;
+            $subtotal2 = round($lineBase * $newQty, 2);
+
             $stU = $this->pdo->prepare(
                 "UPDATE det_cotizacion_producto
-                    SET CANTIDAD = :q, PRECIO = :pr, SUBTOTAL = :st
+                    SET CANTIDAD = :q, PRECIO = :pr, CARGO_ADICIONAL = :ca, SUBTOTAL = :st
                   WHERE ID_DETCOTIZACION_PRODUCTO = :id"
             );
-            return $stU->execute([
+            $ok = $stU->execute([
                 ':q'  => $newQty,
-                ':pr' => $precio,
-                ':st' => $newSub,
+                ':pr' => $precioUnit,
+                ':ca' => $cargoUnit,
+                ':st' => $subtotal2,
                 ':id' => (int)$line['ID_DETCOTIZACION_PRODUCTO'],
+            ]);
+        } else {
+            $stI = $this->pdo->prepare(
+                "INSERT INTO det_cotizacion_producto
+                   (ID_COTIZACION, ID_PRODUCTO, CANTIDAD, PRECIO, CARGO_ADICIONAL, SUBTOTAL)
+                 VALUES (:c, :p, :q, :pr, :ca, :st)"
+            );
+            $ok = $stI->execute([
+                ':c'  => $idCotizacion,
+                ':p'  => $idProducto,
+                ':q'  => $cantidad,
+                ':pr' => $precioUnit,
+                ':ca' => $cargoUnit,
+                ':st' => $subtotal,
             ]);
         }
 
-        $sub  = $cantidad * $precio;
-        $stI = $this->pdo->prepare(
-            "INSERT INTO det_cotizacion_producto
-               (ID_COTIZACION, ID_PRODUCTO, CANTIDAD, PRECIO, SUBTOTAL)
-             VALUES (:c, :p, :q, :pr, :st)"
-        );
-        return $stI->execute([
-            ':c'  => $idCotizacion,
-            ':p'  => $idProducto,
-            ':q'  => $cantidad,
-            ':pr' => $precio,
-            ':st' => $sub,
-        ]);
+        if ($ok ?? false) $this->recalcularTotal($idCotizacion);
+        return (bool)($ok ?? false);
     }
 
-    // Actualizar cantidad en BD
     public function updateQty(int $idCotizacion, int $idProducto, int $cantidad): bool
     {
         $cantidad = max(1, (int)$cantidad);
 
-        // Obtener precio actual de la línea (o del producto si no existiera)
-        $stLine = $this->pdo->prepare(
-            "SELECT ID_DETCOTIZACION_PRODUCTO, PRECIO
-               FROM det_cotizacion_producto
-              WHERE ID_COTIZACION = :c AND ID_PRODUCTO = :p
-              LIMIT 1"
-        );
-        $stLine->execute([':c' => $idCotizacion, ':p' => $idProducto]);
-        $line = $stLine->fetch(PDO::FETCH_ASSOC);
-        if (!$line) return false;
+        $p = $this->fetchProducto($idProducto);
+        if (!$p) return false;
 
-        $precio = (float)$line['PRECIO'];
-        if ($precio <= 0) {
-            $stP = $this->pdo->prepare("SELECT PRECIO FROM producto WHERE ID_PRODUCTO = :p LIMIT 1");
-            $stP->execute([':p' => $idProducto]);
-            $precio = (float)($stP->fetchColumn() ?: 0.0);
-        }
-        if ($precio <= 0) return false;
+        [$precioUnit] = $this->precioConOferta($p);
+        $cargoUnit = $this->cargoUnitario($p);
 
-        $sub = $cantidad * $precio;
+        $tipo = (int)($this->getCotizacionMeta($idCotizacion)['TIPO_COTIZACION'] ?? 1);
+        $lineBase = ($tipo === 1 ? ($precioUnit + $cargoUnit) : $cargoUnit);
+        $subtotal = round($lineBase * $cantidad, 2);
 
         $stU = $this->pdo->prepare(
             "UPDATE det_cotizacion_producto
-                SET CANTIDAD = :q, SUBTOTAL = :st, PRECIO = :pr
-              WHERE ID_DETCOTIZACION_PRODUCTO = :id"
+                SET CANTIDAD = :q, PRECIO = :pr, CARGO_ADICIONAL = :ca, SUBTOTAL = :st
+              WHERE ID_COTIZACION = :c AND ID_PRODUCTO = :p"
         );
-        return $stU->execute([
+        $ok = $stU->execute([
             ':q'  => $cantidad,
-            ':st' => $sub,
-            ':pr' => $precio,
-            ':id' => (int)$line['ID_DETCOTIZACION_PRODUCTO'],
+            ':pr' => $precioUnit,
+            ':ca' => $cargoUnit,
+            ':st' => $subtotal,
+            ':c'  => $idCotizacion,
+            ':p'  => $idProducto,
         ]);
+
+        if ($ok) $this->recalcularTotal($idCotizacion);
+        return (bool)$ok;
     }
 
-    // Eliminar línea en BD
     public function removeItem(int $idCotizacion, int $idProducto): void
     {
         $st = $this->pdo->prepare(
@@ -179,116 +248,161 @@ class CarritoModel
               LIMIT 1"
         );
         $st->execute([':c' => $idCotizacion, ':p' => $idProducto]);
+        $this->recalcularTotal($idCotizacion);
     }
 
-    // Items desde BD (incluye DESCRIPCION)
-    public function getItems(int $idCotizacion): array
+    private function recalcularLineasPorTipo(int $idCot, int $tipo): void
     {
         $st = $this->pdo->prepare(
-            "SELECT d.ID_PRODUCTO, d.CANTIDAD, d.PRECIO, d.SUBTOTAL,
-                    p.NOMBRE_PRODUCTO, p.DESCRIPCION, p.FOTOGRAFIA_PRODUCTO
+            "SELECT d.ID_DETCOTIZACION_PRODUCTO, d.ID_PRODUCTO, d.CANTIDAD
+               FROM det_cotizacion_producto d
+              WHERE d.ID_COTIZACION = :c"
+        );
+        $st->execute([':c' => $idCot]);
+        foreach ($st->fetchAll(PDO::FETCH_ASSOC) as $r) {
+            $p = $this->fetchProducto((int)$r['ID_PRODUCTO']);
+            if (!$p) continue;
+
+            [$precioUnit] = $this->precioConOferta($p);
+            $cargoUnit    = $this->cargoUnitario($p);
+            $qty          = (int)$r['CANTIDAD'];
+
+            $lineBase = ($tipo === 1 ? ($precioUnit + $cargoUnit) : $cargoUnit);
+            $subtotal = round($lineBase * $qty, 2);
+
+            $up = $this->pdo->prepare(
+                "UPDATE det_cotizacion_producto
+                    SET PRECIO = :pr, CARGO_ADICIONAL = :ca, SUBTOTAL = :st
+                  WHERE ID_DETCOTIZACION_PRODUCTO = :id"
+            );
+            $up->execute([
+                ':pr' => $precioUnit,
+                ':ca' => $cargoUnit,
+                ':st' => $subtotal,
+                ':id' => (int)$r['ID_DETCOTIZACION_PRODUCTO'],
+            ]);
+        }
+    }
+
+    public function getItems(int $idCot): array
+    {
+        $st = $this->pdo->prepare(
+            "SELECT d.ID_PRODUCTO, d.CANTIDAD, d.PRECIO, d.CARGO_ADICIONAL, d.SUBTOTAL,
+                    p.NOMBRE_PRODUCTO, p.DESCRIPCION, p.FOTOGRAFIA_PRODUCTO,
+                    p.OFERTA, p.PORCENTAJE_OFERTA, p.INICIO_OFERTA, p.FIN_OFERTA
                FROM det_cotizacion_producto d
                JOIN producto p ON p.ID_PRODUCTO = d.ID_PRODUCTO
               WHERE d.ID_COTIZACION = :c
            ORDER BY d.ID_DETCOTIZACION_PRODUCTO DESC"
         );
-        $st->execute([':c' => $idCotizacion]);
-        $rows = $st->fetchAll(PDO::FETCH_ASSOC);
-
+        $st->execute([':c' => $idCot]);
         $items = [];
-        foreach ($rows as $r) {
+        foreach ($st->fetchAll(PDO::FETCH_ASSOC) as $r) {
+            $ofertaActiva = false;
+            $porc = (float)($r['PORCENTAJE_OFERTA'] ?? 0);
+            if ((int)$r['OFERTA'] === 1 && $porc > 0) {
+                $hoy = date('Y-m-d');
+                $ini = !empty($r['INICIO_OFERTA']) ? substr($r['INICIO_OFERTA'],0,10) : null;
+                $fin = !empty($r['FIN_OFERTA'])    ? substr($r['FIN_OFERTA'],0,10)    : null;
+                if ((!$ini || $ini <= $hoy) && (!$fin || $fin >= $hoy)) $ofertaActiva = true;
+            }
+
             $items[] = [
-                'id'          => (int)$r['ID_PRODUCTO'],
-                'nombre'      => (string)$r['NOMBRE_PRODUCTO'],
-                'descripcion' => (string)($r['DESCRIPCION'] ?? ''),
-                'precio'      => (float)$r['PRECIO'],
-                'cantidad'    => (int)$r['CANTIDAD'],
-                'subtotal'    => (float)$r['SUBTOTAL'],
-                'imagen'      => $r['FOTOGRAFIA_PRODUCTO'] ?: null,
+                'id'             => (int)$r['ID_PRODUCTO'],
+                'nombre'         => (string)$r['NOMBRE_PRODUCTO'],
+                'descripcion'    => (string)($r['DESCRIPCION'] ?? ''),
+                'precio_unit'    => (float)$r['PRECIO'],
+                'cantidad'       => (int)$r['CANTIDAD'],
+                'cargo_unit'     => (float)$r['CARGO_ADICIONAL'],
+                'cargo_total'    => round(((float)$r['CARGO_ADICIONAL']) * (int)$r['CANTIDAD'], 2),
+                'oferta_activa'  => $ofertaActiva,
+                'oferta_porc'    => $ofertaActiva ? $porc : 0,
+                'subtotal'       => (float)$r['SUBTOTAL'],
+                'imagen'         => $r['FOTOGRAFIA_PRODUCTO'] ?: null,
             ];
         }
         return $items;
     }
 
-    // ====== Modo invitado (sesión) ======
+    public function recalcularTotal(int $idCot): void
+    {
+        $st = $this->pdo->prepare(
+            "SELECT COALESCE(SUM(SUBTOTAL), 0)
+               FROM det_cotizacion_producto
+              WHERE ID_COTIZACION = :c"
+        );
+        $st->execute([':c' => $idCot]);
+        $total = (float)$st->fetchColumn();
 
+        $up = $this->pdo->prepare(
+            "UPDATE cotizacion SET TOTAL_COTIZACION = :t WHERE ID_COTIZACION = :c"
+        );
+        $up->execute([':t' => $total, ':c' => $idCot]);
+    }
+
+    /* ====== Sesión → BD ====== */
+
+    public function mergeGuestCartToDb(int $idCliente, array $guestCart): void
+    {
+        if (!$guestCart) return;
+        $idCot = $this->getOrCreateCotizacionAbierta($idCliente);
+        foreach ($guestCart as $idProducto => $data) {
+            $qty = is_array($data) ? (int)($data['cantidad'] ?? 1) : (int)$data;
+            $this->addOrUpdateItem($idCot, (int)$idProducto, max(1, $qty));
+        }
+        $this->recalcularTotal($idCot);
+    }
+
+    /**
+     * Convierte el carrito de sesión a ítems listos para vista del carrito.
+     * Soporta:
+     *  - [id => cantidad]
+     *  - [id => ['cantidad'=>n, 'precio'=>..., 'nombre'=>..., 'imagen'=>...]]
+     * Retorna: [$items, $count, $subtotal, $total]
+     */
     public function sessionCartToItems(array $guestCart): array
     {
         $items = [];
         $count = 0;
         $subtotal = 0.0;
 
-        foreach ($guestCart as $idProducto => $qty) {
+        foreach ($guestCart as $idProducto => $data) {
             $idProducto = (int)$idProducto;
-            $qty = max(1, (int)$qty);
 
-            $prod = $this->getProductCardData($idProducto);
-            if (!$prod) continue;
+            if (is_array($data)) {
+                $qty     = max(1, (int)($data['cantidad'] ?? 1));
+                $nombreV = isset($data['nombre']) ? (string)$data['nombre'] : null;
+                $precioV = isset($data['precio']) ? (float)$data['precio'] : null;
+                $imgV    = isset($data['imagen']) ? (string)$data['imagen'] : null;
+            } else {
+                $qty = max(1, (int)$data);
+                $nombreV = $imgV = null;
+                $precioV = null;
+            }
 
-            $rowTotal = $qty * (float)$prod['precio'];
+            $p = $this->fetchProducto($idProducto);
+            if (!$p) continue;
+
+            [$unitPrice] = $this->precioConOferta($p);
+            if ($precioV !== null && $precioV > 0) $unitPrice = (float)$precioV;
+
+            $rowTotal = $unitPrice * $qty;
+
             $items[] = [
-                'id'          => $prod['id'],
-                'nombre'      => $prod['nombre'],
-                'descripcion' => $prod['descripcion'],
-                'precio'      => (float)$prod['precio'],
-                'cantidad'    => $qty,
-                'subtotal'    => $rowTotal,
-                'imagen'      => $prod['imagen'],
+                'id'          => (int)$p['ID_PRODUCTO'],
+                'nombre'      => $nombreV ?? (string)$p['NOMBRE_PRODUCTO'],
+                'descripcion' => (string)($p['DESCRIPCION'] ?? ''),
+                'precio'      => (float)$unitPrice,
+                'cantidad'    => (int)$qty,
+                'subtotal'    => (float)$rowTotal,
+                'imagen'      => $imgV ?? ($p['FOTOGRAFIA_PRODUCTO'] ?: null),
             ];
+
             $count    += $qty;
             $subtotal += $rowTotal;
         }
 
         $total = $subtotal;
         return [$items, $count, $subtotal, $total];
-    }
-
-    public function sessionUpdateQty(int $idProducto, int $cantidad): void
-    {
-        if (empty($_SESSION['cart']) || !is_array($_SESSION['cart'])) return;
-        $cantidad = max(1, (int)$cantidad);
-        if (isset($_SESSION['cart'][$idProducto])) {
-            $_SESSION['cart'][$idProducto] = $cantidad;
-        }
-    }
-
-    public function sessionRemoveItem(int $idProducto): void
-    {
-        if (!empty($_SESSION['cart'][$idProducto])) {
-            unset($_SESSION['cart'][$idProducto]);
-        }
-    }
-
-    // Fusionar carrito de invitado a BD del cliente
-    public function mergeGuestCartToDb(int $idCliente, array $guestCart): void
-    {
-        if (!$guestCart) return;
-        $idCot = $this->getOrCreateCotizacionAbierta($idCliente);
-
-        foreach ($guestCart as $idProducto => $qty) {
-            $idProducto = (int)$idProducto;
-            $qty        = max(1, (int)$qty);
-            $this->addOrUpdateItem($idCot, $idProducto, $qty);
-        }
-        $this->recalcularTotal($idCot);
-    }
-
-    // Recalcular total de cotización
-    public function recalcularTotal(int $idCotizacion): void
-    {
-        $st = $this->pdo->prepare(
-            "SELECT COALESCE(SUM(SUBTOTAL), 0) AS total
-               FROM det_cotizacion_producto
-              WHERE ID_COTIZACION = :c"
-        );
-        $st->execute([':c' => $idCotizacion]);
-        $total = (float)($st->fetchColumn() ?: 0.0);
-
-        $up = $this->pdo->prepare(
-            "UPDATE cotizacion
-                SET TOTAL_COTIZACION = :t
-              WHERE ID_COTIZACION = :c"
-        );
-        $up->execute([':t' => $total, ':c' => $idCotizacion]);
     }
 }

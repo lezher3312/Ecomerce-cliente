@@ -1,15 +1,14 @@
 <?php
-    require_once __DIR__ . '/../../config/funciones.php';
+require_once __DIR__ . '/../../config/funciones.php';
 
 if (session_status() === PHP_SESSION_NONE) session_start();
 
-/* Path actual (para marcar links activos) */
+/* Path actual */
 $uri  = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $path = '/' . ltrim(substr($uri, strlen(dirname($_SERVER['SCRIPT_NAME']))), '/');
 
-/* Calcular $cartCount (suma de cantidades) */
+/* Calcular carrito */
 $cartCount = 0;
-
 try {
   $idCliente = null;
   if (!empty($_SESSION['cliente']['ID_CLIENTE'])) {
@@ -47,46 +46,70 @@ try {
 ?>
 
 <header class="header">
-  <nav class="nav">
-    <a class="brand" href="<?= url('inicio') ?>" aria-label="Inicio">
+  <nav class="nav d-flex align-items-center justify-content-between">
+    <!-- Logo -->
+    <a class="brand d-flex align-items-center gap-2" href="<?= url('inicio') ?>" aria-label="Inicio">
       <svg viewBox="0 0 24 24" fill="currentColor">
         <path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2Zm0 3.2a6.8 6.8 0 1 1-6.8 6.8A6.808 6.808 0 0 1 12 5.2Z"/>
       </svg>
       <span>Global-import</span>
     </a>
 
-    <div class="navlinks">
+    <!-- Links visibles en PC -->
+    <div class="navlinks d-none d-md-flex">
       <a href="<?= url('inicio') ?>" class="<?= $path === '/inicio' || $path === '/' ? 'active' : '' ?>">Inicio</a>
       <a href="<?= url('catalogo') ?>" class="<?= $path === '/catalogo' ? 'active' : '' ?>">Catálogo</a>
       <a href="<?= url('inicio#destacados') ?>">Destacados</a>
       <a href="<?= url('inicio#nuevos') ?>">Nuevos</a>
       <a href="<?= url('inicio#ofertas') ?>">Ofertas</a>
       <a href="<?= url('ayuda') ?>" class="<?= $path === '/ayuda' ? 'active' : '' ?>">Ayuda</a>
-
-      <a href="<?= url('carrito') ?>"
-         class="btn-cart <?= $path === '/carrito' ? 'active' : '' ?>">
-        <span class="cart-icon" aria-hidden="true">🛒 Mi Carrito</span>
+      <a href="<?= url('carrito') ?>" class="btn-cart <?= $path === '/carrito' ? 'active' : '' ?>">
+        🛒 Mi Carrito
         <span class="cart-badge"<?= $cartCount ? '' : ' style="display:none;"' ?>>
           <?= (int)$cartCount ?>
         </span>
       </a>
     </div>
 
-    <div class="nav-cta">
-    <?php if(isauth()){?>
-    <button class="btn btn-outline"><?php echo $_SESSION['USUARIO'] ?? '';?></button>
-     <?php }else{?>
-      <a href="<?= url('login') ?>" class="btn btn-outline">Iniciar sesión</a>
-    <?php }?>
-     <?php if(isauth()){?>
-            <form method="POST" action="<?= url('logout') ?>">
-      <input type="submit" value="Cerrar Sesión" class="btn btn-primary">
-     </form>
-      <?php }else{?>
-      <a href="<?= url('registro') ?>" class="btn btn-primary">Crear cuenta</a>
-    <?php }?>
+    <!-- Botones de sesión -->
+    <div class="nav-cta d-flex align-items-center gap-2">
+      <?php if(isauth()): ?>
+        <button class="btn btn-outline"><?= $_SESSION['USUARIO'] ?? '' ?></button>
+        <form method="POST" action="<?= url('logout') ?>">
+          <input type="submit" value="Cerrar Sesión" class="btn btn-primary">
+        </form>
+      <?php else: ?>
+        <a href="<?= url('login') ?>" class="btn btn-outline">Iniciar sesión</a>
+        <a href="<?= url('registro') ?>" class="btn btn-primary">Crear cuenta</a>
+      <?php endif; ?>
 
-      <button class="hamb" aria-label="Menú">☰</button>
+      <!-- Botón hamburguesa solo visible en móvil -->
+      <button class="btn btn-outline d-md-none" type="button" 
+              data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" 
+              aria-controls="offcanvasMenu">
+        ☰
+      </button>
     </div>
   </nav>
 </header>
+
+<!-- =========================
+     MENÚ LATERAL SOLO EN MÓVIL
+     ========================= -->
+<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title">Menú</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
+  </div>
+  <div class="offcanvas-body">
+    <ul class="nav flex-column">
+      <li class="nav-item"><a class="nav-link <?= $path === '/inicio' || $path === '/' ? 'active' : '' ?>" href="<?= url('inicio') ?>">Inicio</a></li>
+      <li class="nav-item"><a class="nav-link <?= $path === '/catalogo' ? 'active' : '' ?>" href="<?= url('catalogo') ?>">Catálogo</a></li>
+      <li class="nav-item"><a class="nav-link" href="<?= url('inicio#destacados') ?>">Destacados</a></li>
+      <li class="nav-item"><a class="nav-link" href="<?= url('inicio#nuevos') ?>">Nuevos</a></li>
+      <li class="nav-item"><a class="nav-link" href="<?= url('inicio#ofertas') ?>">Ofertas</a></li>
+      <li class="nav-item"><a class="nav-link <?= $path === '/ayuda' ? 'active' : '' ?>" href="<?= url('ayuda') ?>">Ayuda</a></li>
+      <li class="nav-item"><a class="nav-link <?= $path === '/carrito' ? 'active' : '' ?>" href="<?= url('carrito') ?>">🛒 Carrito (<?= (int)$cartCount ?>)</a></li>
+    </ul>
+  </div>
+</div>
