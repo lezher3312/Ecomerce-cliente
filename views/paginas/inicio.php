@@ -1,60 +1,53 @@
+<?php $extraCss = 'inicio.css'; ?>
 <?php require __DIR__ . '/../layouts/head.php'; ?>
 <?php require __DIR__ . '/../layouts/header.php'; ?>
 
-<!-- ================= HERO ================= -->
+
 <section class="hero">
-  <div class="hero-wrap">
-    <div>
-      <h1>Busca y sigue tus productos importados</h1>
-      <p>Explora por categoría, nombre o código; revisa el estado de tus pedidos en tiempo real.</p>
+  <!-- 🎬 Doble video para rotación -->
+  <video id="video1" autoplay muted playsinline class="hero-bg"></video>
+  <video id="video2" autoplay muted playsinline class="hero-bg hidden"></video>
 
-      <!-- 🔎 Buscador -->
-      <div class="search" role="search">
-        <select aria-label="Categoría">
-          <option value="">Todos</option>
-          <?php foreach($categorias ?? [] as $c): ?>
-            <option value="<?= htmlspecialchars($c['id_categoria']) ?>">
-              <?= htmlspecialchars($c['nombre']) ?>
-            </option>
-          <?php endforeach; ?>
-        </select>
-        <input type="search" placeholder="Buscar productos, marcas o códigos…" aria-label="Buscar">
-        <button>Buscar</button>
-      </div>
+  <!-- Imagen fallback opcional -->
+  <div class="hero-bg-image"></div>
+  <div class="overlay"></div>
 
-      <!-- 🔹 Filtros rápidos -->
-      <div class="quick-filters" aria-label="Filtros rápidos">
-        <span class="chip">Entrega rápida</span>
-        <span class="chip">En oferta</span>
-        <span class="chip">Hazmat</span>
-        <span class="chip">Con garantía</span>
-      </div>
+  <div class="container hero-content">
+    <h1>Busca y sigue tus productos importados</h1>
+    <p>Explora por categoría, nombre o código; revisa el estado de tus pedidos en tiempo real.</p>
+
+    <!-- 🔎 Buscador -->
+    <div class="search" role="search">
+      <input type="search" placeholder="Buscar productos, marcas o códigos…" aria-label="Buscar">
+      <button>Buscar</button>
     </div>
 
-    <!-- 🔹 Carrusel de categorías dinámicas -->
-    <div class="hero-categories-carousel">
+    <!-- 🔹 Filtros rápidos -->
+    <div class="quick-filters mt-3">
+      <span class="chip">Entrega rápida</span>
+      <span class="chip">En oferta</span>
+      <span class="chip">Hazmat</span>
+      <span class="chip">Con garantía</span>
+    </div>
+
+    <!-- 🔹 Carrusel de categorías -->
+    <div class="hero-categories-carousel mt-4">
       <h3>Explora por categoría</h3>
       <div class="cat-carousel">
-  <?php if (!empty($categorias)): ?>
-    <?php foreach($categorias as $c): 
-      $icono = 'fas fa-tags'; // ícono por defecto
-      switch(strtolower($c['nombre'])){
-        case 'tecnologia': $icono = 'fas fa-laptop'; break;
-        case 'hogar': $icono = 'fas fa-couch'; break;
-        case 'moda': $icono = 'fas fa-tshirt'; break;
-        case 'herramientas': $icono = 'fas fa-tools'; break;
-      }
-    ?>
-      <a href="catalogo?cat=<?= $c['id_categoria'] ?>" class="cat-slide">
-        <i class="<?= $icono ?>"></i>
-        <span><?= htmlspecialchars($c['nombre']) ?></span>
-      </a>
-    <?php endforeach; ?>
-  <?php else: ?>
-    <p>No hay categorías registradas.</p>
-  <?php endif; ?>
-</div>
-
+        <?php foreach($categorias ?? [] as $c): 
+          $icono = 'fas fa-tags';
+          switch(strtolower($c['nombre'])) {
+            case 'tecnologia': $icono = 'fas fa-laptop'; break;
+            case 'hogar': $icono = 'fas fa-couch'; break;
+            case 'moda': $icono = 'fas fa-tshirt'; break;
+            case 'herramientas': $icono = 'fas fa-tools'; break;
+          } ?>
+          <a href="catalogo?cat=<?= $c['id_categoria'] ?>" class="cat-slide">
+            <i class="<?= $icono ?>"></i>
+            <span><?= htmlspecialchars($c['nombre']) ?></span>
+          </a>
+        <?php endforeach; ?>
+      </div>
     </div>
   </div>
 </section>
@@ -153,3 +146,66 @@
 </section>
 
 <?php require __DIR__ . '/../layouts/footer.php'; ?>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const video1 = document.getElementById("video1");
+  const video2 = document.getElementById("video2");
+
+  // Lista de videos
+  const videos = [
+    "<?= asset('videos/fondo1.mp4') ?>",
+    "<?= asset('videos/fondo2.mp4') ?>"
+  ];
+
+  let current = 0; // índice actual
+  let next = 1;    // índice siguiente
+  let active = video1;
+  let hidden = video2;
+
+  // Carga inicial
+  active.src = videos[current];
+  hidden.src = videos[next];
+  hidden.classList.add("hidden");
+
+  // Intentar reproducir
+  tryPlay(active);
+
+  // Escucha cuando termina el video activo
+  active.addEventListener("ended", switchVideo);
+  hidden.addEventListener("ended", switchVideo);
+
+  function switchVideo() {
+    // Intercambia visibilidad
+    active.classList.add("hidden");
+    hidden.classList.remove("hidden");
+
+    // Intenta reproducir el nuevo visible
+    tryPlay(hidden);
+
+    // Avanza los índices correctamente
+    current = (current + 1) % videos.length;
+    next = (current + 1) % videos.length;
+
+    // Reasigna las referencias (efecto "anillo")
+    const temp = active;
+    active = hidden;
+    hidden = temp;
+
+    // Prepara el siguiente video mientras se reproduce el actual
+    hidden.src = videos[next];
+  }
+
+  // Si el navegador bloquea video, mostrar imagen
+  function tryPlay(video) {
+    const playPromise = video.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {
+        console.warn("⚠️ Video bloqueado, usando imagen de fondo");
+        document.querySelector(".hero-bg-image").style.display = "block";
+        video.style.display = "none";
+      });
+    }
+  }
+});
+</script>
+

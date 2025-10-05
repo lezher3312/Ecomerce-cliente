@@ -1,0 +1,94 @@
+/* =========================================================
+   HEADER.CSS — Encabezado principal y navegación
+   ========================================================= */
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.nav {
+  max-width: var(--container);
+  margin: auto;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 14px var(--sp-4);
+}
+
+/* ---------- Marca / Logo ---------- */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: var(--fw-700);
+  color: var(--primary);
+}
+.brand svg {
+  width: 28px;
+  height: 28px;
+}
+
+/* ---------- Enlaces de navegación ---------- */
+.navlinks {
+  display: flex;
+  gap: 18px;
+  margin-left: 8px;
+}
+.navlinks a {
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  transition: background .2s ease;
+}
+.navlinks a:hover,
+.navlinks a.active {
+  background: rgba(1, 43, 126, .08);
+}
+
+/* ---------- Botones de sesión ---------- */
+.nav-cta {
+  margin-left: auto;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.cart-badge {
+  background: var(--primary-light);
+  color: var(--text);
+  font-weight: 700;
+  border-radius: 50%;
+  padding: 2px 8px;
+  font-size: .85rem;
+}
+
+/* ---------- Botón hamburguesa ---------- */
+.hamb, .btn-outline.d-md-none {
+  display: none;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 980px) {
+  .navlinks { display: none; }
+  .hamb, .btn-outline.d-md-none { display: inline-block; }
+
+  .offcanvas {
+    background: #fff;
+    border-right: 1px solid var(--border);
+    width: 250px;
+  }
+  .offcanvas .nav-link {
+    color: var(--text);
+    padding: 10px 0;
+    display: block;
+  }
+  .offcanvas .nav-link.active {
+    color: var(--primary);
+    font-weight: 600;
+  }
+}

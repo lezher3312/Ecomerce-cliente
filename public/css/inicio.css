@@ -1,0 +1,370 @@
+/* =========================================================
+   INICIO.CSS — Página principal mejorada (responsive + estética)
+   ========================================================= */
+
+/* ---------- HERO ---------- */
+.hero {
+  background: linear-gradient(135deg, #012b7e 0%, #2b87c8 50%, #5dd3e9 100%);
+  color: #fff;
+  padding: 70px 20px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero h1 {
+  font-size: 2.6rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+.hero p {
+  font-size: 1.1rem;
+  opacity: 0.95;
+  margin-bottom: 35px;
+}
+
+/* ---------- BUSCADOR ---------- */
+.search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  max-width: 600px;
+  margin: 0 auto 20px;
+}
+.search input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: .95rem;
+}
+.search button {
+  padding: 10px 20px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s ease;
+}
+.search button:hover {
+  background: var(--primary-600);
+}
+
+/* ---------- CHIPS ---------- */
+.quick-filters {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 25px;
+}
+.chip {
+  background: rgba(255,255,255,0.25);
+  color: #fff;
+  border-radius: 30px;
+  padding: 8px 16px;
+  font-size: .9rem;
+  transition: background 0.2s, transform 0.2s;
+}
+.chip:hover {
+  background: rgba(255,255,255,0.4);
+  transform: translateY(-2px);
+}
+
+/* ---------- CATEGORÍAS ---------- */
+.hero-categories-carousel {
+  margin-top: 50px;
+}
+.hero-categories-carousel h3 {
+  color: #fff;
+  font-size: 1.4rem;
+  margin-bottom: 16px;
+  text-align: center;
+}
+.cat-carousel {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 18px;
+  padding: 10px 0;
+}
+.cat-slide {
+  background: #fff;
+  color: #012b7e;
+  border-radius: 16px;
+  padding: 16px 20px;
+  width: 130px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.cat-slide:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+.cat-slide i {
+  font-size: 1.9rem;
+  color: #012b7e;
+  margin-bottom: 8px;
+}
+.cat-slide span {
+  font-weight: 600;
+  font-size: .9rem;
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 992px) {
+  .hero h1 { font-size: 2.2rem; }
+  .hero p { font-size: 1rem; }
+  .search-box { padding: 14px; }
+}
+@media (max-width: 768px) {
+  .hero { padding: 60px 16px; }
+  .hero h1 { font-size: 1.8rem; }
+  .search-box form { flex-direction: column; }
+  .search-box button { width: 100%; }
+  .cat-slide { width: 100px; padding: 14px 10px; }
+}
+@media (max-width: 480px) {
+  .hero h1 { font-size: 1.5rem; }
+  .cat-slide { width: 90px; }
+  .cat-slide i { font-size: 1.4rem; }
+
+
+}
+/* =========================================================
+   HERO CON VIDEO O IMAGEN DE FONDO (100% COMPATIBLE PC + MÓVIL)
+   ========================================================= */
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+  text-align: center;
+  padding: 80px 20px;
+  background: linear-gradient(135deg, #012b7e 0%, #2b87c8 50%, #5dd3e9 100%);
+}
+
+/* 🎬 Video de fondo */
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  transition: opacity 1s ease;
+  background: #012b7e;
+}
+
+/* Imagen fallback (si el navegador no permite video) */
+.hero-bg-image {
+  position: absolute;
+  inset: 0;
+  background: url('../images/fondo-import.jpg') center/cover no-repeat;
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+/* Superposición degradada */
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(1,43,126,0.75), rgba(93,211,233,0.55));
+  z-index: 1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+}
+
+/* 🎚️ Transición entre los dos videos */
+.hero-bg.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* =========================================================
+   🔹 SOPORTE MÓVIL
+   ========================================================= */
+
+/* ✅ En móviles mantenemos el video si el navegador lo soporta */
+@media (max-width: 992px) {
+  .hero {
+    padding: 60px 16px;
+  }
+
+  /* Ajustes del video en móvil */
+  .hero-bg {
+    display: block !important;
+  }
+
+  /* Imagen de respaldo si el navegador bloquea video */
+  .no-video .hero-bg {
+    display: none !important;
+  }
+  .no-video .hero-bg-image {
+    opacity: 1;
+  }
+}
+
+/* 🔹 Texto más legible en pantallas pequeñas */
+@media (max-width: 768px) {
+  .hero h1 { font-size: 1.8rem; }
+  .hero p { font-size: .95rem; }
+}
+
+@media (max-width: 480px) {
+  .hero h1 { font-size: 1.5rem; }
+}
+
+/* =========================================================
+   SECCIONES DE PRODUCTOS — Más vendidos / Novedades / Ofertas
+   ========================================================= */
+
+/* ---------- SECCIÓN GENERAL ---------- */
+.section {
+  padding: 70px 20px;
+}
+.section-head {
+  max-width: var(--container);
+  margin: 0 auto 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.section-head h2 {
+  font-size: 1.8rem;
+  color: var(--primary);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.section-head .lead {
+  font-size: 1rem;
+  color: var(--muted);
+  margin: 0;
+}
+.section-head .pill {
+  color: #012b7e;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.section-head .pill:hover {
+  color: #023b9b;
+  text-decoration: underline;
+}
+
+/* ---------- CARRUSEL DE PRODUCTOS ---------- */
+.carousel {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding: 10px 4px 20px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  scrollbar-color: #d2e2f7 transparent;
+}
+.carousel::-webkit-scrollbar {
+  height: 6px;
+}
+.carousel::-webkit-scrollbar-thumb {
+  background: #b7c9e9;
+  border-radius: 6px;
+}
+.carousel::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ---------- TARJETAS DE PRODUCTOS ---------- */
+.card-prod {
+  flex: 0 0 260px;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  scroll-snap-align: start;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-prod:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+.card-prod img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-bottom: 1px solid #eef1f6;
+}
+.card-prod .body {
+  padding: 14px 16px;
+}
+.card-prod h3 {
+  font-size: 1rem;
+  margin: 6px 0;
+  font-weight: 600;
+  color: var(--text);
+}
+.card-prod .meta {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.card-prod .price {
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+/* ---------- BADGES ---------- */
+.badge {
+  display: inline-block;
+  background: #5dd3e9;
+  color: #012b7e;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-size: 0.8rem;
+  margin-bottom: 8px;
+}
+
+/* ---------- ESTILOS DIFERENCIADOS POR SECCIÓN ---------- */
+#nuevos {
+  background: linear-gradient(180deg, #f8faff 0%, #eef3f9 100%);
+}
+#nuevos h2 {
+  color: #023b9b;
+}
+#ofertas {
+  background: linear-gradient(180deg, #fffaf3 0%, #fff2e2 100%);
+}
+#ofertas h2 {
+  color: #d46b08;
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 992px) {
+  .section { padding: 60px 16px; }
+  .card-prod { flex: 0 0 220px; }
+}
+@media (max-width: 768px) {
+  .section-head { flex-direction: column; text-align: center; }
+  .carousel { gap: 14px; }
+  .card-prod { flex: 0 0 200px; }
+  .card-prod img { height: 160px; }
+}
+@media (max-width: 480px) {
+  .section { padding: 40px 14px; }
+  .card-prod { flex: 0 0 180px; }
+  .card-prod h3 { font-size: 0.9rem; }
+  .card-prod .price { font-size: 0.95rem; }
+}
