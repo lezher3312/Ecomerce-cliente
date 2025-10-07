@@ -38,17 +38,17 @@ class CarritoModel
 
         $now     = date('Y-m-d H:i:s');
         $venc    = date('Y-m-d H:i:s', strtotime('+15 days'));
-        $entrega = date('Y-m-d H:i:s', strtotime('+3 days'));
+        $entrega = date('Y-m-d H:i:s', strtotime('+10 days'));
 
         $st = $this->pdo->prepare(
             "INSERT INTO cotizacion
                (ID_CLIENTE, FECHA_COTIZACION, FECHA_VENCIMIENTO, FECHA_ENTREGA,
                 TOTAL_COTIZACION, TOTAL_CON_IMPUESTOS, TIPO_DE_CAMBIO,
-                TIPO_COTIZACION, ESTADO, ANTICIPO)
+                TIPO_COTIZACION, ESTADO, ANTICIPO, TOTAL_VENTA_EN_Q)
              VALUES
                (:cli, :fc, :fv, :fe,
-                0.00, 0.00, 1.00,
-                1, 1, 0.00)"
+                0.00, 0.00, 0.00,
+                1, 1, 0.00, 0.00)"
         );
         $st->execute([':cli' => $idCliente, ':fc' => $now, ':fv' => $venc, ':fe' => $entrega]);
         return (int)$this->pdo->lastInsertId();
@@ -72,7 +72,6 @@ class CarritoModel
 
     public function setEstado(int $idCot, int $estado): void
     {
-        // 0=inactivo, 1=activo, 2=falta impuesto, 3=procesado, 4=confirmado, 5=anulado
         if (!in_array($estado, [0,1,2,3,4,5], true)) return;
         $st = $this->pdo->prepare("UPDATE cotizacion SET ESTADO = :e WHERE ID_COTIZACION = :c");
         $st->execute([':e' => $estado, ':c' => $idCot]);
@@ -82,6 +81,18 @@ class CarritoModel
     {
         $st = $this->pdo->prepare("UPDATE cotizacion SET TOTAL_CON_IMPUESTOS = :t WHERE ID_COTIZACION = :c");
         $st->execute([':t' => $totalConImpuestos, ':c' => $idCot]);
+    }
+
+    public function setTipoCambio(int $idCot, float $tc): void
+    {
+        $st = $this->pdo->prepare("UPDATE cotizacion SET TIPO_DE_CAMBIO = :tc WHERE ID_COTIZACION = :c");
+        $st->execute([':tc' => $tc, ':c' => $idCot]);
+    }
+
+    public function setTotalVentaEnQ(int $idCot, float $totalQ): void
+    {
+        $st = $this->pdo->prepare("UPDATE cotizacion SET TOTAL_VENTA_EN_Q = :q WHERE ID_COTIZACION = :c");
+        $st->execute([':q' => $totalQ, ':c' => $idCot]);
     }
 
     public function contarItemsCarrito(int $idCliente): int
@@ -141,8 +152,6 @@ class CarritoModel
         }
         if ((int)($p['PESO_OPTION'] ?? 0) === 1) {
             $cargo += (float)($p['PESO_PRECIO'] ?? 0);
-            // Si quisieras multiplicar por PESO_CANTIDAD:
-            // $cargo += (float)($p['PESO_PRECIO'] ?? 0) * (float)($p['PESO_CANTIDAD'] ?? 1);
         }
         return round($cargo, 2);
     }
@@ -162,7 +171,6 @@ class CarritoModel
         $lineBase = ($tipo === 1 ? ($precioUnit + $cargoUnit) : $cargoUnit);
         $subtotal = round($lineBase * $cantidad, 2);
 
-        // ¿ya existe línea?
         $stC = $this->pdo->prepare(
             "SELECT ID_DETCOTIZACION_PRODUCTO, CANTIDAD
                FROM det_cotizacion_producto
@@ -340,7 +348,7 @@ class CarritoModel
         $up->execute([':t' => $total, ':c' => $idCot]);
     }
 
-    /* ====== Sesión → BD ====== */
+    /* ====== Sesión ↔ BD ====== */
 
     public function mergeGuestCartToDb(int $idCliente, array $guestCart): void
     {
@@ -353,13 +361,6 @@ class CarritoModel
         $this->recalcularTotal($idCot);
     }
 
-    /**
-     * Convierte el carrito de sesión a ítems listos para vista del carrito.
-     * Soporta:
-     *  - [id => cantidad]
-     *  - [id => ['cantidad'=>n, 'precio'=>..., 'nombre'=>..., 'imagen'=>...]]
-     * Retorna: [$items, $count, $subtotal, $total]
-     */
     public function sessionCartToItems(array $guestCart): array
     {
         $items = [];
@@ -404,5 +405,100 @@ class CarritoModel
 
         $total = $subtotal;
         return [$items, $count, $subtotal, $total];
+    }
+
+    public function buildItemsFromGuestCart(array $guestCart, int $tipo): array
+    {
+        $items = [];
+        $totalBase = 0.0;
+
+        foreach ($guestCart as $idProducto => $data) {
+            $qty = is_array($data) ? (int)($data['cantidad'] ?? 1) : (int)$data;
+            $qty = max(1, $qty);
+            $p = $this->fetchProducto((int)$idProducto);
+            if (!$p) continue;
+
+            [$precioUnit] = $this->precioConOferta($p);
+            $cargoUnit = $this->cargoUnitario($p);
+            $lineBase = ($tipo === 1 ? ($precioUnit + $cargoUnit) : $cargoUnit);
+            $subtotal = round($lineBase * $qty, 2);
+
+            $items[] = [
+                'id'          => (int)$p['ID_PRODUCTO'],
+                'nombre'      => (string)$p['NOMBRE_PRODUCTO'],
+                'descripcion' => (string)($p['DESCRIPCION'] ?? ''),
+                'precio_unit' => (float)$precioUnit,
+                'cantidad'    => (int)$qty,
+                'cargo_unit'  => (float)$cargoUnit,
+                'subtotal'    => (float)$subtotal,
+                'imagen'      => $p['FOTOGRAFIA_PRODUCTO'] ?: null,
+            ];
+            $totalBase += $subtotal;
+        }
+        return [$items, round($totalBase, 2)];
+    }
+
+    /* ====== NUEVO: Impuestos y Recargos (para desglose en la vista) ====== */
+
+    /**
+     * Devuelve el último registro de la tabla `impuestos` para la cotización dada.
+     * Estructura prevista: ID_IMPUESTOS, ID_COTIZACION, ENVIO, ARANCEL, DESADUANAJE, FLETE, FECHA_CREACION.
+     */
+    public function getImpuestosByCotizacion(int $idCot): array
+    {
+        $st = $this->pdo->prepare(
+            "SELECT ENVIO, ARANCEL, DESADUANAJE, FLETE
+               FROM impuestos
+              WHERE ID_COTIZACION = :c
+           ORDER BY ID_IMPUESTOS DESC
+              LIMIT 1"
+        );
+        $st->execute([':c' => $idCot]);
+        $row = $st->fetch(PDO::FETCH_ASSOC) ?: [];
+        return [
+            'ENVIO'        => (float)($row['ENVIO'] ?? 0),
+            'ARANCEL'      => (float)($row['ARANCEL'] ?? 0),
+            'DESADUANAJE'  => (float)($row['DESADUANAJE'] ?? 0),
+            'FLETE'        => (float)($row['FLETE'] ?? 0),
+        ];
+    }
+
+    /**
+     * Devuelve la lista de recargos (activos) para la cotización.
+     * Estructura prevista: ID_RECARGOS, ID_COTIZACION, NOMBRE_RERCARGO, VALOR_RECARGO, ESTADO, FECHA_CREACION.
+     */
+    public function getRecargosByCotizacion(int $idCot): array
+    {
+        $st = $this->pdo->prepare(
+            "SELECT NOMBRE_RERCARGO, VALOR_RECARGO
+               FROM recargos
+              WHERE ID_COTIZACION = :c
+                AND (ESTADO = 1 OR ESTADO IS NULL)
+           ORDER BY FECHA_CREACION ASC, ID_RECARGOS ASC"
+        );
+        $st->execute([':c' => $idCot]);
+        return $st->fetchAll(PDO::FETCH_ASSOC) ?: [];
+    }
+
+    /** Calcula la suma de impuestos + recargos (útil para comparar con TOTAL_CON_IMPUESTOS). */
+    public function calcularSumaImpuestosYRecargos(int $idCot): float
+    {
+        $imp = $this->getImpuestosByCotizacion($idCot);
+        $sum = (float)($imp['ENVIO'] ?? 0)
+             + (float)($imp['ARANCEL'] ?? 0)
+             + (float)($imp['DESADUANAJE'] ?? 0)
+             + (float)($imp['FLETE'] ?? 0);
+
+        foreach ($this->getRecargosByCotizacion($idCot) as $r) {
+            $sum += (float)($r['VALOR_RECARGO'] ?? 0);
+        }
+        return round($sum, 2);
+    }
+
+    /** Opcional: sincroniza TOTAL_CON_IMPUESTOS con el detalle actual (si lo deseas). */
+    public function refreshTotalConImpuestosDesdeDetalle(int $idCot): void
+    {
+        $sum = $this->calcularSumaImpuestosYRecargos($idCot);
+        $this->setTotalConImpuestos($idCot, $sum);
     }
 }

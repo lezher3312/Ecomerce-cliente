@@ -63,12 +63,17 @@ try {
       <a href="<?= url('inicio#nuevos') ?>">Nuevos</a>
       <a href="<?= url('inicio#ofertas') ?>">Ofertas</a>
       <a href="<?= url('ayuda') ?>" class="<?= $path === '/ayuda' ? 'active' : '' ?>">Ayuda</a>
+      <?php if (isauth()): ?>
+        <!-- ✨ Solo mostrar si hay sesión -->
+        <a href="<?= url('cotizacion') ?>" class="<?= $path === '/cotizacion' ? 'active' : '' ?>">cotizaciones</a>
+      <?php endif; ?>
       <a href="<?= url('carrito') ?>" class="btn-cart <?= $path === '/carrito' ? 'active' : '' ?>">
         🛒 Mi Carrito
         <span class="cart-badge"<?= $cartCount ? '' : ' style="display:none;"' ?>>
           <?= (int)$cartCount ?>
         </span>
       </a>
+      
     </div>
 
     <!-- Botones de sesión -->

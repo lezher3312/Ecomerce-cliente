@@ -1,0 +1,342 @@
+/* ===========================
+   Cotización – estilos base
+   =========================== */
+
+:root{
+  --c-bg: #f6f8fc;
+  --c-card: #ffffff;
+  --c-border: #e5e7eb;
+  --c-text: #0f172a;
+  --c-muted: #64748b;
+  --c-primary: #0b5ed7;           /* Azul principal */
+  --c-primary-contrast: #ffffff;
+  --c-success: #16a34a;
+  --c-danger: #e11d48;
+  --radius: 12px;
+  --shadow: 0 6px 18px rgba(2,12,27,.06);
+}
+
+html, body {
+  background: var(--c-bg);
+  color: var(--c-text);
+}
+
+.cotz-container{
+  max-width: 1100px;
+  margin: 24px auto 48px;
+  padding: 0 16px;
+}
+
+.cotz-container h1{
+  font-size: 2.2rem;
+  margin: 8px 0 16px;
+  font-weight: 700;
+}
+
+/* ===========================
+   Stepper
+   =========================== */
+
+.stepper{
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+  margin: 8px 0 20px;
+}
+
+.step{
+  position: relative;
+  text-align: center;
+  padding-top: 18px;
+}
+
+.step .dot{
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--c-border);
+  border-radius: 50%;
+  background: #fff;
+  margin: 0 auto 6px;
+  box-sizing: border-box;
+}
+
+.step .lbl{
+  font-size: .92rem;
+  color: var(--c-muted);
+  min-height: 1.8em;
+}
+
+.step .bar{
+  position: absolute;
+  left: 50%;
+  top: 12px;
+  transform: translateX(6px);
+  height: 2px;
+  width: calc(100% - 12px);
+  background: var(--c-border);
+}
+
+/* estados */
+.step.done .dot{
+  background: var(--c-primary);
+  border-color: var(--c-primary);
+}
+.step.done .lbl{ color: var(--c-primary); }
+.step.done .bar{ background: var(--c-primary); }
+
+.step.current .dot{
+  border-color: var(--c-primary);
+  box-shadow: 0 0 0 3px rgba(11,94,215,.15);
+}
+.step.current .lbl{ color: var(--c-text); }
+
+/* el último no necesita barra */
+.step:last-child .bar{ display: none; }
+
+/* ===========================
+   Tipo de cotización (form)
+   =========================== */
+
+.tipo-form{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+  background: var(--c-card);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  margin: 6px 0 16px;
+  box-shadow: var(--shadow);
+}
+
+.tipo-form label{
+  font-size: .95rem;
+}
+
+/* ===========================
+   Grid principal
+   =========================== */
+
+.grid{
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 16px;
+}
+
+@media (max-width: 900px){
+  .grid{ grid-template-columns: 1fr; }
+}
+
+/* ===========================
+   Tarjetas
+   =========================== */
+
+.card{
+  background: var(--c-card);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+}
+
+.card h2{
+  margin: 0 0 12px;
+  font-size: 1.25rem;
+}
+
+/* ===========================
+   Tabla de productos
+   =========================== */
+
+.tabla{
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.tabla thead th{
+  background: #f8fafc;
+  font-weight: 600;
+  font-size: .95rem;
+  padding: 12px;
+  border-bottom: 1px solid var(--c-border);
+}
+
+.tabla tbody td{
+  padding: 12px;
+  border-bottom: 1px solid var(--c-border);
+  vertical-align: top;
+}
+
+.tabla tfoot td{
+  padding: 12px;
+  background: #fcfdff;
+  border-top: 2px solid var(--c-border);
+  font-size: 1rem;
+}
+
+.num{ text-align: right; }
+
+.prod{
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.prod img{
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--c-border);
+  background: #fff;
+}
+
+.prod .name{
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.prod .desc{
+  color: var(--c-muted);
+  font-size: .92rem;
+}
+
+/* ===========================
+   Alertas y textos
+   =========================== */
+
+.alert{
+  background: #eef6ff;
+  border: 1px solid #cfe2ff;
+  color: #084298;
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin: 8px 0 16px;
+}
+
+.muted{
+  color: var(--c-muted);
+  font-size: .95rem;
+}
+
+/* ===========================
+   Botones
+   =========================== */
+
+.btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform .04s ease, box-shadow .18s ease, background .18s ease, color .18s ease;
+  text-decoration: none;
+}
+
+.btn:active{ transform: translateY(1px); }
+
+.btn-primary{
+  background: var(--c-primary);
+  color: var(--c-primary-contrast);
+  border-color: var(--c-primary);
+  box-shadow: 0 6px 16px rgba(11,94,215,.25);
+}
+.btn-primary:hover{ filter: brightness(1.05); }
+
+.btn-outline{
+  background: #fff;
+  color: var(--c-primary);
+  border-color: var(--c-primary);
+}
+.btn-outline:hover{ background: rgba(11,94,215,.06); }
+
+.btn-link{
+  background: transparent;
+  color: var(--c-primary);
+  border: none;
+  padding: 6px 2px;
+}
+.btn-link:hover{ text-decoration: underline; }
+
+.btn-danger{
+  background: var(--c-danger);
+  color: #fff;
+  border-color: var(--c-danger);
+}
+
+.w-100{ width: 100%; }
+
+.stack{ display: grid; gap: 10px; }
+
+/* ===========================
+   Utilidades
+   =========================== */
+
+.container{ max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+.hidden{ display: none !important; }
+.center{ text-align: center; }
+
+table .strong, .tabla .strong, .num strong{ font-weight: 700; }
+
+@media (max-width: 600px){
+  .tabla thead{ display: none; }
+  .tabla, .tabla tbody, .tabla tr, .tabla td{ display: block; width: 100%; }
+  .tabla tr{ border-bottom: 1px solid var(--c-border); }
+  .tabla td{
+    text-align: left !important;
+    padding: 10px 12px;
+  }
+  .tabla td.num{ text-align: left; }
+}
+
+/* ===========================
+   MODAL (envío embebido)
+   =========================== */
+
+.sr-only{
+  position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+  overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+}
+
+.modal{
+  position:fixed; inset:0; z-index: 99999;
+  display: none;
+}
+.modal.open, .modal[aria-hidden="false"]{
+  display: block;
+}
+
+.modal-backdrop{
+  position:absolute; inset:0; background:rgba(15,23,42,.45);
+}
+
+.modal-content{
+  position:relative; margin:40px auto; max-width:1100px;
+  background:#f8fafc; border:1px solid var(--c-border);
+  border-radius:16px; padding:10px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.25);
+}
+
+.modal-close{
+  position:absolute; top:8px; right:10px;
+  border:0; background:transparent; font-size:22px;
+  cursor:pointer; color:#334155;
+}
+
+.modal-body{ padding:6px; min-height:200px; }
+.loading{ padding:10px; font-size:14px; color:#475569; }
+
+/* --- Fix de stacking / clics del modal --- */
+.modal{ position:fixed; inset:0; z-index: 100000; }
+.modal-backdrop{ position:absolute; inset:0; background:rgba(15,23,42,.45); z-index: 0; pointer-events:auto; }
+.modal-content{ position:relative; z-index: 1; pointer-events:auto; }   /* <- encima del backdrop */
+.modal-body iframe{ pointer-events:auto; display:block; width:100%; height:80vh; border:0; }
