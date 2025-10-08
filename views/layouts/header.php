@@ -79,7 +79,7 @@ try {
     <!-- Botones de sesión -->
     <div class="nav-cta d-flex align-items-center gap-2">
       <?php if(isauth()): ?>
-        <button class="btn btn-outline"><?= $_SESSION['USUARIO'] ?? '' ?></button>
+      <button class="btn btn-outline" id="menu" data-nombre="<?php echo $_SESSION['NOMBRE'];?>" data-email="<?php echo $_SESSION['EMAIL']; ?>"><?php echo $_SESSION['USUARIO'] ?? '';?></button>
         <form method="POST" action="<?= url('logout') ?>">
           <input type="submit" value="Cerrar Sesión" class="btn btn-primary">
         </form>

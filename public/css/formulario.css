@@ -28,3 +28,8 @@
     display: inline-block;
     margin: 0.5rem 0;
 }
+
+.formulario__imagen{
+    max-width: 250px;
+    margin: 0.5rem 0; 
+}
