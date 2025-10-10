@@ -118,3 +118,5 @@ try {
     </ul>
   </div>
 </div>
+
+<script src="<?= asset('js/menu.js') ?>"></script>
