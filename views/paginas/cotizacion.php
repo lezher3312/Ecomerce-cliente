@@ -115,7 +115,7 @@ $flash = $_SESSION['flash'] ?? null; unset($_SESSION['flash']);
               <td colspan="6" class="num">
                 Impuestos / otros cargos (USD)
                 <?php
-                  // ==== DESGLOSE (pequeño cambio) ====
+                  // ==== DESGLOSE ====
                   $__imp  = (isset($impuestosDet) && is_array($impuestosDet)) ? $impuestosDet : [];
                   $__recs = (isset($recargosDet)   && is_array($recargosDet))   ? $recargosDet   : [];
                   $__has  = (!empty($__imp) || !empty($__recs));
@@ -219,7 +219,7 @@ $flash = $_SESSION['flash'] ?? null; unset($_SESSION['flash']);
               <button class="btn btn-outline" type="submit">Anular cotización</button>
             </form>
           <?php elseif ($estado === 4): ?>
-            <div class="muted" id="js-estado-text">Confirmada. Redireccionando a envío…</div>
+            <div class="muted" id="js-estado-text">Confirmada. Redireccionando a pago…</div>
           <?php elseif ($estado === 5): ?>
             <div class="muted" id="js-estado-text">Cotización anulada.</div>
             <a class="btn" href="<?= htmlspecialchars($basePath) ?>/carrito">Volver al carrito</a>
@@ -359,7 +359,7 @@ $flash = $_SESSION['flash'] ?? null; unset($_SESSION['flash']);
               actions.innerHTML = `
                 <div class="muted" id="js-estado-text">Estado: Procesado. Ya puedes confirmar.</div>
                 <form method="post" action="${basePath}/cotizacion/confirmar" class="stack" id="js-confirm-form">
-                  <button class="btn btn-primary" type="submit">Confirmar y continuar a envío</button>
+                  <button class="btn btn-primary" type="submit">Confirmar y continuar a pago</button>
                 </form>
                 <form method="post" action="${basePath}/cotizacion/anular" class="stack" style="margin-top:8px;">
                   <button class="btn btn-outline" type="submit">Anular cotización</button>

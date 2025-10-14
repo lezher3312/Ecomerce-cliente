@@ -186,15 +186,24 @@ class CotizacionController
         exit;
     }
 
-    public function confirmar(): void
-    {
-        $idCliente = $this->requireClienteId();
-        $idCot     = $this->carrito->getOrCreateCotizacionAbierta($idCliente);
+ // controllers/CotizacionController.php (solo el método confirmar)
+public function confirmar(): void
+{
+    $idCliente = $this->requireClienteId();
+    $idCot     = $this->carrito->getOrCreateCotizacionAbierta($idCliente);
 
-        $this->carrito->setEstado($idCot, 4);
-        header('Location: ' . $this->basePath . '/envio');
-        exit;
-    }
+    // estado 4 = Confirmado
+    $this->carrito->setEstado($idCot, 4);
+
+    // (opcional) limpiar preview de TC
+    unset($_SESSION['tc_preview'], $_SESSION['tc_updated_at']);
+
+    // <-- AQUÍ la redirección correcta
+    header('Location: ' . $this->basePath . '/pago');
+    exit;
+}
+
+
 
     public function anular(): void
     {

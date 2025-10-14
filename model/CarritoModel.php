@@ -501,4 +501,19 @@ class CarritoModel
         $sum = $this->calcularSumaImpuestosYRecargos($idCot);
         $this->setTotalConImpuestos($idCot, $sum);
     }
+
+    // CarritoModel.php
+public function getUltimaCotizacionConfirmada(int $idCliente): ?array {
+    $st = $this->pdo->prepare(
+        "SELECT *
+           FROM cotizacion
+          WHERE ID_CLIENTE = :cli AND ESTADO = 4
+       ORDER BY ID_COTIZACION DESC
+          LIMIT 1"
+    );
+    $st->execute([':cli' => $idCliente]);
+    $row = $st->fetch(PDO::FETCH_ASSOC);
+    return $row ?: null;
+}
+
 }

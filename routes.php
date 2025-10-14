@@ -235,3 +235,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/cotizacion/estado-json')
     (new CotizacionController())->estadoJson();
     exit;
 }
+
+//pagos
+// ---------------- PAGO ----------------
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/pago') {
+    require_once __DIR__ . '/controllers/PagoController.php';
+    (new PagoController())->index();
+    exit;
+}
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $path === '/pago/crear') {
+    require_once __DIR__ . '/controllers/PagoController.php';
+    (new PagoController())->crear();
+    exit;
+}
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/pago/gracias') {
+    require_once __DIR__ . '/controllers/PagoController.php';
+    (new PagoController())->gracias();
+    exit;
+}

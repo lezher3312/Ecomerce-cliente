@@ -67,6 +67,10 @@ try {
         <!-- ✨ Solo mostrar si hay sesión -->
         <a href="<?= url('cotizacion') ?>" class="<?= $path === '/cotizacion' ? 'active' : '' ?>">cotizaciones</a>
       <?php endif; ?>
+      <?php if (isauth()): ?>
+        <!-- ✨ Solo mostrar si hay sesión -->
+        <a href="<?= url('pago') ?>" class="<?= $path === '/pago' ? 'active' : '' ?>">Pagos</a>
+      <?php endif; ?>
       <a href="<?= url('carrito') ?>" class="btn-cart <?= $path === '/carrito' ? 'active' : '' ?>">
         🛒 Mi Carrito
         <span class="cart-badge"<?= $cartCount ? '' : ' style="display:none;"' ?>>
