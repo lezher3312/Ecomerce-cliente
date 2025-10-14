@@ -1,0 +1,83 @@
+.modal{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.links {
+    position: absolute;
+    top: 80px;          /* below header */
+    right: 35px;           /* align to right edge */
+    width: 280px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.3s ease-in-out;
+    z-index: 999;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* Show dropdown when active */
+.links--animar {
+    opacity: 1;
+    transform: translateY(0);
+}
+.links--cerrar {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+/* Header section inside dropdown */
+.links-header {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    background: #f4f6fb;   /* light gray-blue to match page */
+}
+
+/* User avatar circle */
+.avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #004aad;   /* your brand blue */
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    font-weight: bold;
+}
+
+/* User info text */
+.user-info {
+    font-size: 13px;
+    color: #333;
+    line-height: 1.3;
+}
+
+/* Dropdown links */
+.links a {
+    display: block;
+    padding: 12px 18px;
+    color: #333;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background 0.2s ease;
+}
+.links a:hover {
+    background: #eaf1ff;   /* soft blue hover */
+    color: #004aad;
+}
+
+/* Divider lines */
+.links hr {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 4px 0;
+}

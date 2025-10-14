@@ -124,6 +124,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $path === '/reestablecer') {
     exit;
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/datospersonales') {
+    require_once __DIR__ . '/controllers/PerfilController.php';
+    (new PerfilController())->datospersonales();
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $path === '/datospersonales') {
+    require_once __DIR__ . '/controllers/PerfilController.php';
+    (new PerfilController())->datospersonales();
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/nit') {
+    require_once __DIR__ . '/controllers/PerfilController.php';
+    (new PerfilController())->nit();
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $path === '/nit') {
+    require_once __DIR__ . '/controllers/PerfilController.php';
+    (new PerfilController())->nit();
+    exit;
+}
+
+
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/foto') {
+    require_once __DIR__ . '/controllers/PerfilController.php';
+    (new PerfilController())->foto();
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $path === '/foto') {
+    require_once __DIR__ . '/controllers/PerfilController.php';
+    (new PerfilController())->foto();
+    exit;
+}
+
 // ---------------- CARRITO ----------------
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/carrito') {
     require_once __DIR__ . '/controllers/CarritoController.php';

@@ -25,6 +25,7 @@ class AuthController {
                    session_start();
                    $_SESSION['ID'] = $usuario->ID;
                    $_SESSION['NOMBRE'] = $usuario->NOMBRE_COMPLETO;
+                   $_SESSION['EMAIL'] = $usuario->EMAIL;
                    $_SESSION['USUARIO'] = $usuario->USUARIO_PAGINA;
 
                   header('Location: https://gtis.tech/Global-client/');

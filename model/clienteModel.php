@@ -94,6 +94,34 @@ use PDO;
         return self::$alertas;
     }
 
+     public function validardatosp(){
+         if(!$this->NOMBRE_COMPLETO) {
+            self::$alertas['error'][] = 'El Nombre Completo es Obligatorio';
+        }
+        if(!$this->TELEFONO) {
+            self::$alertas['error'][] = 'El Telefono es Obligatorio';
+        }
+         if(!$this->EMAIL) {
+            self::$alertas['error'][] = 'El Email es Obligatorio';
+        }
+         if(!$this->USUARIO_PAGINA) {
+            self::$alertas['error'][] = 'El Usuario es Obligatorio';
+        }
+               
+        return self::$alertas;
+    }
+
+    public function validarnit(){
+         if(!$this->NIT) {
+            self::$alertas['error'][] = 'La NIT es obligatorio';
+        }
+        if(strlen($this->NIT) < 9) {
+            self::$alertas['error'][] = 'El Nit debe contener almenos 9 caracteres';
+        }
+        
+        return self::$alertas;
+    }
+    
     public function hashPassword(): void{
         $this->PASSWORD_PAGINA = password_hash($this->PASSWORD_PAGINA, PASSWORD_BCRYPT);
     }
