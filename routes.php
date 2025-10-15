@@ -290,3 +290,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/pago/gracias') {
     (new PagoController())->gracias();
     exit;
 }
+// ---------------- RUTAS NUEVO PRODUCTO ----------------
+
+// GET: formulario en iframe/modal
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $path === '/nuevo-producto') {
+    require_once __DIR__ . '/controllers/Nuevo_ProductoController.php';
+    (new Nuevo_ProductoController())->form();
+    exit;
+}
+
+// POST: guardar producto y agregarlo a la cotización
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $path === '/nuevo-producto/guardar') {
+    require_once __DIR__ . '/controllers/Nuevo_ProductoController.php';
+    (new Nuevo_ProductoController())->guardar();
+    exit;
+}

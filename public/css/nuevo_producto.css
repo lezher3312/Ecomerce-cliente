@@ -1,0 +1,179 @@
+/* ============ Nuevo Producto – estilos (tema claro) ============ */
+:root{
+  --bg:#ffffff;
+  --card:#ffffff;
+  --text:#0f172a;
+  --muted:#64748b;
+  --primary:#2563eb;
+  --primary-600:#1d4ed8;
+  --primary-700:#1e40af;
+  --ring:#93c5fd;
+  --border:#e2e8f0;
+  --danger:#b91c1c;
+  --shadow:0 6px 18px rgba(2,8,23,.06);
+  --radius:14px;
+  --pad:16px;
+  --gap:14px;
+  --font:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:var(--font);
+  color:var(--text);
+  background:#ffffff; /* fondo claro y plano */
+}
+
+/* -------- Contenedor principal -------- */
+.cotz-container{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:calc(var(--pad) + 4px);
+  box-shadow:var(--shadow);
+  max-width:760px;
+  margin:auto;
+}
+
+.cotz-container h1{
+  margin:0 0 6px 0;
+  font-size:clamp(1.25rem, 2.2vw, 1.6rem);
+  letter-spacing:.2px;
+}
+
+.muted{
+  margin:4px 0 18px 0;
+  color:var(--muted);
+  font-size:.95rem;
+}
+
+/* -------- Formulario -------- */
+form.stack{
+  display:flex;
+  flex-direction:column;
+  gap:var(--gap);
+}
+
+.grid-2{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:var(--gap);
+}
+
+label{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  font-weight:600;
+  font-size:.95rem;
+}
+
+input[type="text"],
+input[type="url"],
+input[type="number"],
+input[type="file"],
+select{
+  appearance:none;
+  width:100%;
+  padding:12px 14px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:#fff;
+  color:var(--text);
+  font:inherit;
+  transition:border-color .15s ease, box-shadow .15s ease, transform .02s ease;
+}
+
+input[readonly]{
+  background:#f1f5f9;
+  color:#0f172a;
+}
+
+input:focus,
+select:focus{
+  outline:none;
+  border-color:var(--primary);
+  box-shadow:0 0 0 4px var(--ring);
+}
+
+/* -------- File input (boleta) -------- */
+input[type="file"]{
+  padding:10px 12px;
+  cursor:pointer;
+}
+
+/* -------- Acciones / Botones -------- */
+.actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+  margin-top:6px;
+}
+
+.btn{
+  --btn-pad:12px 16px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:var(--btn-pad);
+  border-radius:12px;
+  border:1px solid transparent;
+  font-weight:600;
+  cursor:pointer;
+  text-decoration:none;
+  transition:transform .06s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
+  user-select:none;
+}
+
+.btn:active{ transform:translateY(1px) }
+
+.btn-primary{
+  background:var(--primary);
+  color:#fff;
+  box-shadow:0 6px 18px rgba(37,99,235,.25);
+}
+.btn-primary:hover{ background:var(--primary-600) }
+.btn-primary:focus{ box-shadow:0 0 0 4px var(--ring) }
+
+.btn-outline{
+  background:#fff;
+  color:var(--text);
+  border-color:var(--border);
+}
+.btn-outline:hover{ border-color:#cbd5e1; background:#f8fafc }
+
+/* -------- Mensajes de error -------- */
+.error,
+p[style*="color:#b91c1c"]{
+  color:var(--danger)!important;
+  font-weight:600;
+}
+
+/* -------- Helpers responsivos -------- */
+@media (min-width: 640px){
+  .grid-2{
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+@media (min-width: 900px){
+  .cotz-container{
+    padding:calc(var(--pad) + 10px);
+  }
+}
+
+/* -------- Microinteracciones -------- */
+select:hover,
+input:hover{ border-color:#cbd5e1 }
+label:hover input,
+label:hover select{ box-shadow:0 2px 10px rgba(2,8,23,.05) }
+
+/* -------- Estados inválidos -------- */
+input:invalid,
+select:invalid{
+  border-color:#f59e0b;
+}

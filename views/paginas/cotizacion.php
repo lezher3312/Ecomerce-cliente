@@ -62,11 +62,17 @@ $flash = $_SESSION['flash'] ?? null; unset($_SESSION['flash']);
     <div class="alert">Tu cotización está vacía.</div>
     <div class="actions">
       <a class="btn" href="<?= htmlspecialchars($basePath) ?>/catalogo">Ir al catálogo</a>
+      <!-- Nuevo: botón para agregar ítem manual aunque esté vacío -->
+      <button type="button" id="btnOpenNuevoProd" class="btn btn-outline" style="margin-left:8px;">Agregar ítem manual</button>
     </div>
   <?php else: ?>
     <div class="grid">
       <article class="card">
         <h2>Productos</h2>
+        <div class="actions" style="margin-bottom:8px;">
+          <!-- Nuevo: botón para abrir el modal de nuevo producto -->
+          <button type="button" id="btnOpenNuevoProd" class="btn btn-outline">Agregar Nuevo Producto</button>
+        </div>
         <table class="tabla">
           <thead>
             <tr>
@@ -115,7 +121,6 @@ $flash = $_SESSION['flash'] ?? null; unset($_SESSION['flash']);
               <td colspan="6" class="num">
                 Impuestos / otros cargos (USD)
                 <?php
-                  // ==== DESGLOSE ====
                   $__imp  = (isset($impuestosDet) && is_array($impuestosDet)) ? $impuestosDet : [];
                   $__recs = (isset($recargosDet)   && is_array($recargosDet))   ? $recargosDet   : [];
                   $__has  = (!empty($__imp) || !empty($__recs));
@@ -156,7 +161,6 @@ $flash = $_SESSION['flash'] ?? null; unset($_SESSION['flash']);
                     </div>
                   </div>
                 <?php endif; ?>
-                <!-- ==== /DESGLOSE ==== -->
               </td>
               <td class="num"><strong id="js-impuestos">US$ <?= number_format($impuestosYOtros, 2) ?></strong></td>
             </tr>
@@ -230,6 +234,21 @@ $flash = $_SESSION['flash'] ?? null; unset($_SESSION['flash']);
   <?php endif; ?>
 </main>
 
+<!-- ===================== MODAL IFRAME NUEVO PRODUCTO ===================== -->
+<div id="nuevoProdModal" class="modal" aria-hidden="true">
+  <div class="modal-backdrop" data-close="1"></div>
+  <div class="modal-content" role="dialog" aria-labelledby="nuevoProdTitle" aria-modal="true">
+    <button class="modal-close" type="button" aria-label="Cerrar" data-close="1">×</button>
+    <h2 id="nuevoProdTitle" class="sr-only">Nuevo producto</h2>
+    <div class="modal-body">
+      <div id="npLoading" class="loading">Cargando…</div>
+      <iframe id="npFrame"
+              src="<?= htmlspecialchars($basePath) ?>/nuevo-producto?embed=1"
+              style="width:100%;height:80vh;border:0;border-radius:12px;background:#fff;display:block;"></iframe>
+    </div>
+  </div>
+</div>
+
 <!-- ===================== MODAL IFRAME ENVÍO ===================== -->
 <div id="envioModal" class="modal" aria-hidden="true">
   <div class="modal-backdrop" data-close="1"></div>
@@ -250,12 +269,43 @@ $flash = $_SESSION['flash'] ?? null; unset($_SESSION['flash']);
 <!-- ===================== SCRIPTS: MODAL + FALLBACK + MENSAJERÍA + POLLING ===================== -->
 <script>
 (function(){
+  const basePath = <?= json_encode($basePath) ?>;
+
+  /* ===== Nuevo Producto (modal) ===== */
+  const npModal   = document.getElementById('nuevoProdModal');
+  const npIframe  = document.getElementById('npFrame');
+  const npLoading = document.getElementById('npLoading');
+  const npOpenBtn = document.getElementById('btnOpenNuevoProd');
+
+  function openNp(){ if(!npModal) return; npModal.classList.add('open'); npModal.setAttribute('aria-hidden','false'); document.documentElement.style.overflow='hidden'; }
+  function closeNp(){ if(!npModal) return; npModal.classList.remove('open'); npModal.setAttribute('aria-hidden','true'); document.documentElement.style.overflow=''; }
+
+  npOpenBtn?.addEventListener('click', ()=>{
+    if (npIframe && npLoading) npLoading.style.display='block';
+    openNp();
+    npIframe?.addEventListener('load', ()=>{ if (npLoading) npLoading.style.display='none'; }, {once:true});
+  });
+
+  npModal?.addEventListener('click', (e)=>{ if (e.target.dataset.close==='1' || e.target.classList.contains('modal-backdrop')) closeNp(); });
+  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeNp(); });
+
+  window.addEventListener('message', (ev)=>{
+    if(!ev?.data || typeof ev.data!=='object') return;
+    if (ev.data.type === 'nuevoProductoAdded') {
+      closeNp();
+      window.location.href = basePath + '/cotizacion';
+    }
+    if (ev.data.type === 'closeNuevoProducto') {
+      closeNp();
+    }
+  });
+
+  /* ===== Envío (tu código existente) ===== */
   const modal   = document.getElementById('envioModal');
   const iframe  = document.getElementById('envioFrame');
   const loading = document.getElementById('envioLoading');
   const openBtn = document.getElementById('btnOpenEnvio');
   const fallbackForm = document.getElementById('fallbackPedir');
-  const basePath = <?= json_encode($basePath) ?>;
 
   function openModal(){
     if (!modal) return;
